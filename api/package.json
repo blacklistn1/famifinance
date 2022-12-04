@@ -21,20 +21,24 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs -d data-source.ts",
     "typeorm:generate": "yarn typeorm migration:generate -p",
-    "typeorm:migrate": "yarn typeorm migration:run"
+    "typeorm:create": "typeorm-ts-node-commonjs migration:create",
+    "typeorm:migrate": "yarn typeorm migration:run",
+    "typeorm:revert": "yarn typeorm migration:revert",
+    "typeorm:show": "yarn typeorm migration:show"
   },
   "dependencies": {
     "@nestjs/common": "^9.2.1",
     "@nestjs/core": "^9.2.1",
     "@nestjs/platform-express": "^9.2.1",
+    "@nestjs/typeorm": "^9.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "express-session": "^1.17.3",
-    "mariadb": "^3.0.2",
+    "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.6.0",
-    "sqlite": "^4.1.2",
+    "sqlite3": "^5.1.2",
     "typeorm": "^0.3.11"
   },
   "devDependencies": {

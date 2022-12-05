@@ -2,7 +2,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 const dataSourceOptions = {
   dropSchema: false,
-  synchronize: false,
+  synchronize: true,
   entities: ['**/*.entity.js'],
 };
 
@@ -17,13 +17,15 @@ if (['development', 'production'].includes(process.env.NODE_ENV)) {
   });
 }
 
+if (process.env.NODE_ENV === 'production')
+  Object.assign(dataSourceOptions, { synchronize: false });
+
 if (process.env.NODE_ENV === 'test') {
   Object.assign(dataSourceOptions, {
     type: 'sqlite',
     database: ':memory:',
     entities: ['**/*.entity.ts'],
     dropSchema: true,
-    synchronize: true,
   });
 }
 

@@ -5,9 +5,14 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '../data-source';
 import { APP_PIPE } from '@nestjs/core';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
-  imports: [UsersModule, TypeOrmModule.forRoot(dataSourceOptions)],
+  imports: [
+    UsersModule,
+    TypeOrmModule.forRoot(dataSourceOptions),
+    TransactionsModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

@@ -1,11 +1,28 @@
 ### Create a user
-POST http://localhost:3000/users/
+POST http://localhost:3000/users/signup
 Content-Type: application/json
 
 {
-  "email": "n2v@c.com",
+  "email": "ndv3@c.com",
   "password": "123123123"
 }
+
+### Sign in
+POST http://localhost:3000/users/signin
+Content-Type: application/json
+
+{
+  "email": "ndv3@c.com",
+  "password": "123123123"
+}
+
+### Who am I
+GET http://localhost:3000/users/whoami
+Content-Type: application/json
+
+### Sign out
+DELETE http://localhost:3000/users/signout
+Content-Type: application/json
 
 ### Get all users
 GET http://localhost:3000/users

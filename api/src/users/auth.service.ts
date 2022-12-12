@@ -15,7 +15,7 @@ export class AuthService {
   }
 
   async signup(email: string, password: string) {
-    const user = await this.userService.findOne(email);
+    const user = await this.userService.findOneByEmail(email);
     if (user) throw new BadRequestException('email is in use');
 
     const salt = randomBytes(16).toString('hex');
@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string) {
-    const user = await this.userService.findOne(email);
+    const user = await this.userService.findOneByEmail(email);
     if (!user) throw new NotFoundException('User not found');
 
     const [salt, storedHash] = user.password.split('.');

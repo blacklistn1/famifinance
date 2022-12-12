@@ -14,7 +14,14 @@ export class UsersService {
     return await this.repository.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOneByEmail(email: string): Promise<User> {
+    if (!email) {
+      throw new BadRequestException('Invalid email');
+    }
+    return await this.repository.findOneBy({ email });
+  }
+
+  async findOneById(id: number): Promise<User> {
     if (!id) {
       throw new BadRequestException('Invalid id');
     }

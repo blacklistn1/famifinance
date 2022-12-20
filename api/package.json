@@ -20,12 +20,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-commonjs -d data-source.ts",
-    "typeorm:create": "typeorm-ts-node-commonjs migration:create",
-    "typeorm:generate": "yarn typeorm migration:generate -p",
-    "typeorm:migrate": "yarn typeorm migration:run",
-    "typeorm:revert": "yarn typeorm migration:revert",
-    "typeorm:show": "yarn typeorm migration:show"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "typeorm:create": "typeorm migration:create",
+    "typeorm:generate": "typeorm migration:generate -p -d data-source.ts",
+    "typeorm:migrate": "typeorm migration:run -d data-source.ts",
+    "typeorm:revert": "typeorm migration:revert -d data-source.ts",
+    "typeorm:show": "typeorm migration:show -d data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.2.1",

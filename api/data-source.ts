@@ -1,7 +1,7 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 const dataSourceOptions = {
-  synchronize: false,
+  synchronize: true,
   dropSchema: false,
   database: 'famifinance',
 };
@@ -10,6 +10,7 @@ if (['development', 'production'].includes(process.env.NODE_ENV)) {
   Object.assign(dataSourceOptions, {
     type: 'mariadb',
     host: 'localhost',
+    port: 3306,
     username: 'root',
     password: '123123123',
     entities: ['src/**/*.entity.js'],

@@ -1,0 +1,8 @@
+### Sign up
+POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+{
+  "email": "vndv@c.com",
+  "password": "123123123"
+}

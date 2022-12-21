@@ -1,14 +1,14 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 const dataSourceOptions = {
-  synchronize: true,
+  synchronize: false,
   dropSchema: false,
   database: 'famifinance',
 };
 
 if (['development', 'production'].includes(process.env.NODE_ENV)) {
   Object.assign(dataSourceOptions, {
-    type: 'mariadb',
+    type: 'mysql',
     host: 'localhost',
     port: 3306,
     username: 'root',
@@ -29,7 +29,7 @@ if (['testing'].includes(process.env.NODE_ENV)) {
 const typeDS = JSON.parse(JSON.stringify(dataSourceOptions));
 Object.assign(typeDS, {
   entities: ['src/**/*.entity.ts'],
-  migrations: ['src/migrations/*.ts'],
+  // migrations: ['src/migrations/*.ts'],
 });
 const dataSource = new DataSource(typeDS as DataSourceOptions);
 

@@ -1,19 +1,25 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 
 const dataSourceOptions = {
-  synchronize: false,
+  synchronize: true,
   dropSchema: false,
   database: 'famifinance',
 };
 
 if (['development', 'production'].includes(process.env.NODE_ENV)) {
   Object.assign(dataSourceOptions, {
-    type: 'mysql',
+    type: 'mariadb',
     host: 'localhost',
     port: 3306,
     username: 'root',
     password: '123123123',
     entities: ['src/**/*.entity.js'],
+  });
+}
+
+if (['production'].includes(process.env.NODE_ENV)) {
+  Object.assign(dataSourceOptions, {
+    synchronize: false,
   });
 }
 
@@ -29,7 +35,7 @@ if (['testing'].includes(process.env.NODE_ENV)) {
 const typeDS = JSON.parse(JSON.stringify(dataSourceOptions));
 Object.assign(typeDS, {
   entities: ['src/**/*.entity.ts'],
-  // migrations: ['src/migrations/*.ts'],
+  migrations: ['src/migrations/*.ts'],
 });
 const dataSource = new DataSource(typeDS as DataSourceOptions);
 

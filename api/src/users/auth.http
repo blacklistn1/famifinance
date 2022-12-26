@@ -6,3 +6,17 @@ Content-Type: application/json
   "email": "vndv@c.com",
   "password": "123123123"
 }
+
+### Sign in
+POST http://localhost:3000/auth/signin
+Content-Type: application/json
+
+{
+  "email": "vndv@c.com",
+  "password": "123123123"
+}
+
+### Who am I
+GET http://localhost:3000/auth/whoami
+Content-Type: application/json
+

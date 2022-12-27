@@ -8,7 +8,7 @@ import * as session from 'express-session';
     session({
       secret: 'secret',
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
     }),
   );
   await app.listen(3000);

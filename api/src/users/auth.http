@@ -3,20 +3,24 @@ POST http://localhost:3000/auth/signup
 Content-Type: application/json
 
 {
-  "email": "vndv@c.com",
-  "password": "123123123"
+  "email": "vndv2@c.com",
+  "password": "123123123",
+  "firstName": "Vương"
 }
 
 ### Sign in
-POST http://localhost:3000/auth/signin
+POST http://localhost:3000/auth
 Content-Type: application/json
 
 {
-  "email": "vndv@c.com",
+  "email": "vndv2@c.com",
   "password": "123123123"
 }
+
+### Sign out
+DELETE http://localhost:3000/auth/signout
+Content-Type: application/json
 
 ### Who am I
 GET http://localhost:3000/auth/whoami
 Content-Type: application/json
-

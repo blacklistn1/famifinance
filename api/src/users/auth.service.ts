@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { scryptSync, randomBytes } from 'crypto';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -10,21 +11,20 @@ export class AuthService {
     const user = await this.userService.findOneByEmail(email);
 
     if (!user) throw new BadRequestException('Incorrect email or password');
-    const [salt, inputPassword] = password.split('.');
+    const [salt, storedPassword] = user.password.split('.');
     const encPassword = scryptSync(password, salt, 32).toString('hex');
-    if (encPassword !== inputPassword)
+    if (encPassword !== storedPassword)
       throw new BadRequestException('Incorrect password');
     return user;
   }
 
-  async signUp(email: string, password: string) {
-    const user = this.userService.findOneByEmail(email);
-    if (Object.keys(user).length)
-      throw new BadRequestException('Email already exists');
+  async signUp(body: CreateUserDto) {
+    const user = await this.userService.findOneByEmail(body.email);
+    if (user) throw new BadRequestException('Email already exists');
 
     const salt = randomBytes(16).toString('hex');
-    const encPassword = scryptSync(password, salt, 32).toString('hex');
-    const finalPassword = [salt, encPassword].join('.');
-    return await this.userService.create(email, finalPassword);
+    const encPassword = scryptSync(body.password, salt, 32).toString('hex');
+    body.password = [salt, encPassword].join('.');
+    return await this.userService.create(body);
   }
 }

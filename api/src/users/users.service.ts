@@ -2,21 +2,37 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Profile } from '../entities/profile.entity';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Profile) private profileRepo: Repository<Profile>,
+  ) {}
 
-  async create(email: string, password: string): Promise<User> {
-    const user = this.repo.create({ email, password });
-    return await this.repo.save(user);
+  async create(body: CreateUserDto): Promise<User> {
+    const newUser = this.userRepo.create({
+      email: body.email,
+      password: body.password,
+    });
+    const user = await this.userRepo.save(newUser);
+    const profile = this.profileRepo.create({
+      user,
+      balance: 0,
+      firstName: body.firstName,
+      lastName: body.lastName || null,
+    });
+    await this.profileRepo.save(profile);
+    return user;
   }
 
   async findOneById(id: number) {
-    return await this.repo.findOneBy({ id });
+    return await this.userRepo.findOneBy({ id });
   }
 
-  findOneByEmail(email: string) {
-    return this.repo.findOneBy({ email });
+  async findOneByEmail(email: string) {
+    return await this.userRepo.findOneBy({ email });
   }
 }

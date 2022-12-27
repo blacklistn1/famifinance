@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { Profile } from './profile.entity';
 
 @Entity()
 @Unique(['email'])
@@ -17,6 +19,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToOne(() => Profile, (profile) => profile.user)
+  profile: Profile;
 
   @Column({
     default: false,

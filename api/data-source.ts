@@ -13,7 +13,7 @@ if (['development', 'production'].includes(process.env.NODE_ENV)) {
     port: 3306,
     username: 'root',
     password: '123123123',
-    entities: ['src/**/*.entity.js'],
+    entities: [__dirname + '/src/**/*.entity.js'],
   });
 }
 

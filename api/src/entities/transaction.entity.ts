@@ -13,7 +13,6 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
   @ManyToOne(() => User)
   user: User;
 

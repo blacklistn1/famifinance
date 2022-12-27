@@ -1,0 +1,3 @@
+### User profile
+GET http://localhost:3000/profile/3
+Content-Type: application/json

@@ -1,0 +1,12 @@
+### Add a transaction
+POST http://localhost:3000/transactions
+Content-Type: application/json
+
+{
+  "title": "Some title",
+  "amount": 1
+}
+
+### get transactions
+GET http://localhost:3000/transactions
+Content-Type: application/json

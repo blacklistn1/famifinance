@@ -7,6 +7,7 @@ import { dataSourceOptions } from '../data-source';
 import { APP_PIPE } from '@nestjs/core';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ProfileModule } from './profile/profile.module';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -24,4 +25,6 @@ import { ProfileModule } from './profile/profile.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}

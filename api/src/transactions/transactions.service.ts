@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transaction } from '../entities/transaction.entity';
-import { Repository } from 'typeorm';
+import { NotBrackets, Repository } from 'typeorm';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { User } from '../entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -22,10 +22,15 @@ export class TransactionsService {
   }
 
   async getTransactions(user: User) {
-    return await dataSource
-      .createQueryBuilder()
-      .select('*')
-      .from(Transaction, 't')
-      .getMany();
+    return await this.repo.find({
+      relations: {
+        user: true,
+      },
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
   }
 }

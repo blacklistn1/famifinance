@@ -3,8 +3,8 @@ POST http://localhost:3000/transactions
 Content-Type: application/json
 
 {
-  "title": "Some title",
-  "amount": 1
+  "title": "Some title 2",
+  "amount": 10
 }
 
 ### get transactions

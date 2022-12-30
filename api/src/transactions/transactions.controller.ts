@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { AuthGuard } from '../users/guards/auth.guard';
-import { IsOwnerGuard } from './guards/is-owner.guard';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../entities/user.entity';
+import { Serialize } from '../users/interceptors/serialize.interceptor';
+import { CurrentUserTransactionParentDto } from './dtos/current-user-transaction-parent.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -17,11 +26,16 @@ export class TransactionsController {
     @CurrentUser() user: User,
   ) {
     return await this.transactionsService.createOne(body, user);
-    // return await this.transactionsService.createOne(body);
   }
 
   @Get('/')
+  @Serialize(CurrentUserTransactionParentDto)
   async getTransactions(@CurrentUser() user: User) {
     return this.transactionsService.getTransactions(user);
+  }
+
+  @Patch('/:id')
+  async updateTransaction(@Param('id') id: number, @CurrentUser() user: User) {
+    return { id, user };
   }
 }

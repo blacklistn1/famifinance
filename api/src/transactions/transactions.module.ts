@@ -6,9 +6,13 @@ import { Transaction } from '../entities/transaction.entity';
 import { User } from '../entities/user.entity';
 import { CurrentUserMiddleware } from '../users/middlewares/current-user.middleware';
 import { UsersModule } from '../users/users.module';
+import { Category } from '../entities/category.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Transaction, User]), UsersModule],
+  imports: [
+    TypeOrmModule.forFeature([Transaction, User, Category]),
+    UsersModule,
+  ],
   controllers: [TransactionsController],
   providers: [TransactionsService],
 })

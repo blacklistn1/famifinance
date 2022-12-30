@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Category } from './category.entity';
 
 @Entity()
 export class Transaction {
@@ -23,6 +24,9 @@ export class Transaction {
     nullable: true,
   })
   description: string;
+
+  @ManyToOne(() => Category)
+  category: Category;
 
   @Column()
   amount: number;

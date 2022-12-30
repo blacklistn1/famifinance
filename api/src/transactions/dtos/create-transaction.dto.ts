@@ -1,4 +1,3 @@
-import { User } from '../../entities/user.entity';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateTransactionDto {
@@ -9,6 +8,10 @@ export class CreateTransactionDto {
   @IsString()
   @IsOptional()
   description: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  categoryId: number;
 
   @IsNumber()
   amount: number;

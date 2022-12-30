@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transaction } from '../entities/transaction.entity';
-import { NotBrackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { User } from '../entities/user.entity';
-import { UsersService } from '../users/users.service';
-import { dataSource } from '../../data-source';
+import { Category } from '../entities/category.entity';
 
 @Injectable()
 export class TransactionsService {
   constructor(
     @InjectRepository(Transaction) private repo: Repository<Transaction>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(Category) private cateRepo: Repository<Category>,
   ) {}
 
   async createOne(transaction: CreateTransactionDto, user: User) {
@@ -22,15 +23,19 @@ export class TransactionsService {
   }
 
   async getTransactions(user: User) {
-    return await this.repo.find({
-      relations: {
-        user: true,
-      },
+    return await this.userRepo.findOne({
       where: {
-        user: {
-          id: user.id,
+        id: user.id,
+      },
+      relations: {
+        transactions: {
+          category: true,
         },
       },
     });
+  }
+
+  async updateTransaction(id: number, user: User) {
+    return await this.repo.findOneBy({ id });
   }
 }

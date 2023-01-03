@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -37,8 +37,14 @@
       </v-btn>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer />
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>mdi-menu</v-icon>
+      <v-btn v-if="!$auth.loggedIn" nuxt to="/login">
+        Login
+      </v-btn>
+      <v-btn v-if="!$auth.loggedIn" nuxt to="/register">
+        Register
+      </v-btn>
+      <v-btn v-else @click.prevent="logout">
+        Logout
       </v-btn>
     </v-app-bar>
     <v-main>
@@ -46,19 +52,6 @@
         <Nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light> mdi-repeat </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer :absolute="!fixed" app>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
   </v-app>
 </template>
 
@@ -84,9 +77,13 @@ export default {
       ],
       miniVariant: false,
       right: true,
-      rightDrawer: false,
       title: 'Vuetify.js',
     }
   },
+  methods: {
+    logout() {
+      console.log('Logout');
+    }
+  }
 }
 </script>

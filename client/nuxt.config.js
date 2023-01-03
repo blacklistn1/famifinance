@@ -40,7 +40,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -50,7 +50,22 @@ export default {
   },
 
   // Auth module
-  auth: {},
+  auth: {
+    strategies: {
+      local: false,
+      cookie: {
+        cookie: {
+          property: 'connect.sid'
+        },
+        token: false,
+        endpoints: {
+          login: { url: '/auth', method: 'post' },
+          logout: { url: '/auth/signout', method: 'delete' },
+          user: { url: '/auth/whoami', method: 'get' }
+        }
+      }
+    }
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -72,5 +87,11 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    postcss: false,
+  },
+
+  server: {
+    port: 3030,
+  },
 }

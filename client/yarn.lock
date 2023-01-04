@@ -3743,6 +3743,7 @@ __metadata:
     vue: ^2.7.10
     vue-server-renderer: ^2.7.10
     vue-template-compiler: ^2.7.10
+    vuelidate: ^0.7.7
     vuetify: ^2.6.10
   languageName: unknown
   linkType: soft
@@ -12549,6 +12550,13 @@ __metadata:
     "@vue/compiler-sfc": 2.7.14
     csstype: ^3.1.0
   checksum: 8b06da67cc40870c66a30b7a6bc2874950cd4383792c371eb30497dd14fc7b41cf308b1c4517368d8f0e7ac16198c08de19236f6a79fe43f4bdbc4a1d9d4ad07
+  languageName: node
+  linkType: hard
+
+"vuelidate@npm:^0.7.7":
+  version: 0.7.7
+  resolution: "vuelidate@npm:0.7.7"
+  checksum: 69cefd3300fbb208eb3bf8d5cd2a6b739aa49a9aefcf976341d0e7c4a6fcb546118ea52ddf4c6871bce6d160780542e1f8128d243b903801dc4eaf491d7c6931
   languageName: node
   linkType: hard
 

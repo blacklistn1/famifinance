@@ -13,7 +13,7 @@ import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { User } from '../entities/user.entity';
 import { Serialize } from '../users/interceptors/serialize.interceptor';
-import { CurrentUserTransactionParentDto } from './dtos/current-user-transaction-parent.dto';
+import { CurrentUserDto } from './dtos/current-user.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -29,7 +29,7 @@ export class TransactionsController {
   }
 
   @Get('/')
-  @Serialize(CurrentUserTransactionParentDto)
+  @Serialize(CurrentUserDto)
   async getTransactions(@CurrentUser() user: User) {
     return this.transactionsService.getTransactions(user);
   }

@@ -7,9 +7,22 @@
         </v-card-title>
         <v-card-text>
           <v-form>
-            <v-text-field label="Email"></v-text-field>
-            <v-text-field type="password" label="Password"></v-text-field>
-            <v-btn>Submit</v-btn>
+            <v-text-field
+              v-model="email"
+              label="Email"
+              :error-messages="emailErrors"
+              @input="$v.email.$touch()"
+              @blur="$v.email.$touch()"
+            ></v-text-field>
+            <v-text-field
+              v-model="password"
+              type="password"
+              label="Password"
+              :error-messages="passwordErrors"
+              @input="$v.password.$touch()"
+              @blur="$v.password.$touch()"
+            ></v-text-field>
+            <v-btn @click="handleSubmit">Submit</v-btn>
           </v-form>
         </v-card-text>
       </v-card>
@@ -18,8 +31,59 @@
 </template>
 
 <script>
+import { validationMixin } from 'vuelidate';
+import { email, minLength, required } from 'vuelidate/lib/validators';
+
+function mapState(auth, param2) {
+
+}
+
 export default {
-  layout: 'default',
+  mixins: [validationMixin],
+  validations: {
+    email: {
+      required,
+      email,
+    },
+    password: {
+      required,
+      minLength: minLength(8)
+    }
+  },
+  data: () => ({
+    email: '',
+    password: ''
+  }),
+  computed: {
+    ...mapState('user', {
+      userEmail: 'email',
+      userFirstName: 'firstName',
+    }),
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.required && errors.push('Email is required');
+      !this.$v.email.email && errors.push('Must be a valid email');
+      return errors;
+    },
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.password.$dirty) return errors;
+      !this.$v.password.required && errors.push('Password is required');
+      !this.$v.password.minLength && errors.push(`Password must be ${this.$v.password.$params.minLength.min} characters long`);
+      return errors;
+    }
+  },
+  methods: {
+    async handleSubmit() {
+      this.$v.$touch();
+      const res = await this.$axios.post('/auth', {
+        email: this.email,
+        password: this.password,
+      });
+      console.log(res.headers);
+    }
+  }
 }
 </script>
 

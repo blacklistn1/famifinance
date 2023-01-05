@@ -46,7 +46,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'http://localhost:3030',
+    baseURL: 'http://localhost:3000',
   },
 
   // Auth module
@@ -54,14 +54,19 @@ export default {
     strategies: {
       local: false,
       cookie: {
-        cookie: {
-          property: 'connect.sid'
+        token: {
+          property: 'Set-Cookie',
+          name: 'Cookie',
+          type: 'connect.sid',
+          required: true,
         },
-        token: false,
         endpoints: {
           login: { url: '/auth', method: 'post' },
           logout: { url: '/auth/signout', method: 'delete' },
           user: { url: '/auth/whoami', method: 'get' }
+        },
+        user: {
+          property: 'data',
         }
       }
     }

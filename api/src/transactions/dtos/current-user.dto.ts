@@ -1,5 +1,13 @@
 import { Expose, Type } from 'class-transformer';
 
+class CurrentUserTransactionCateDto {
+  @Expose()
+  id: number;
+
+  @Expose()
+  title: string;
+}
+
 class CurrentUserTransactionsDto {
   @Expose()
   id: number;
@@ -20,14 +28,6 @@ class CurrentUserTransactionsDto {
   @Expose({ name: 'updatedAt' })
   @Type(() => Date)
   lastUpdated: Date;
-}
-
-class CurrentUserTransactionCateDto {
-  @Expose()
-  id: number;
-
-  @Expose()
-  title: string;
 }
 
 export class CurrentUserDto {

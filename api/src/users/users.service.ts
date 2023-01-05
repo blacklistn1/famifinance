@@ -29,10 +29,29 @@ export class UsersService {
   }
 
   async findOneById(id: number) {
-    return await this.userRepo.findOneBy({ id });
+    return await this.userRepo.findOne({
+      where: { id },
+      relations: {
+        profile: true,
+      },
+    });
   }
 
   async findOneByEmail(email: string) {
-    return await this.userRepo.findOneBy({ email });
+    return await this.userRepo.findOne({
+      where: { email },
+      relations: {
+        profile: true,
+      },
+    });
+  }
+
+  async findOneBy<T>(key: T) {
+    switch (typeof key) {
+      case 'number':
+        return await this.findOneById(key);
+      default:
+        return await this.findOneByEmail(key as string);
+    }
   }
 }

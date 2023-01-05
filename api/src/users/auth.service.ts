@@ -8,7 +8,7 @@ export class AuthService {
   constructor(private userService: UsersService) {}
 
   async signIn(email: string, password: string) {
-    const user = await this.userService.findOneByEmail(email);
+    const user = await this.userService.findOneBy<string>(email);
 
     if (!user) throw new BadRequestException('Incorrect email or password');
     const [salt, storedPassword] = user.password.split('.');
@@ -19,7 +19,7 @@ export class AuthService {
   }
 
   async signUp(body: CreateUserDto) {
-    const user = await this.userService.findOneByEmail(body.email);
+    const user = await this.userService.findOneBy<string>(body.email);
     if (user) throw new BadRequestException('Email already exists');
 
     const salt = randomBytes(16).toString('hex');

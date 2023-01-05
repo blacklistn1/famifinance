@@ -1,4 +1,12 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+
+class UserProfileDto {
+  @Expose()
+  firstName: string;
+
+  @Expose()
+  lastName: string;
+}
 
 export class UserDto {
   @Expose()
@@ -6,4 +14,8 @@ export class UserDto {
 
   @Expose()
   email: string;
+
+  @Expose()
+  @Type(() => UserProfileDto)
+  profile: UserProfileDto;
 }

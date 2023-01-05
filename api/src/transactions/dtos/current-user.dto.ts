@@ -1,7 +1,6 @@
 import { Expose, Type } from 'class-transformer';
-import { CurrentUserTransactionCateDto } from './current-user-transaction-cate.dto';
 
-export class CurrentUserTransactionsDto {
+class CurrentUserTransactionsDto {
   @Expose()
   id: number;
 
@@ -21,4 +20,24 @@ export class CurrentUserTransactionsDto {
   @Expose({ name: 'updatedAt' })
   @Type(() => Date)
   lastUpdated: Date;
+}
+
+class CurrentUserTransactionCateDto {
+  @Expose()
+  id: number;
+
+  @Expose()
+  title: string;
+}
+
+export class CurrentUserDto {
+  @Expose()
+  id: number;
+
+  @Expose()
+  email: string;
+
+  @Expose()
+  @Type(() => CurrentUserTransactionsDto)
+  transactions: CurrentUserTransactionsDto[];
 }

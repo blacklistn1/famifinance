@@ -16,7 +16,7 @@ import { UserDto } from './dtos/user.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { SignInDto } from './dtos/sign-in.dto';
 
-@Controller('auth')
+@Controller('user')
 @Serialize(UserDto)
 export class UsersController {
   constructor(private authService: AuthService) {}

@@ -1,0 +1,17 @@
+### Sign in
+POST http://localhost:3000/auth
+Content-Type: application/json
+
+{
+  "email": "vndv@c.com",
+  "password": "123123123"
+}
+
+### Who am I
+GET http://localhost:3000/auth/whoami
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoidm5kdkBjLmNvbSIsImlhdCI6MTY3NDAyOTY5MSwiZXhwIjoxNjc0MDI5NzUxfQ.ZE-IWQxX5G8v1auroVlzl7uxUo6EyS4bEwVH5kH4HhQ
+
+### Sign out
+DELETE http://localhost:3000/auth/logout
+Content-Type: application/json

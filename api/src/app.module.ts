@@ -1,29 +1,24 @@
-import { Module, ValidationPipe } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
 import { dataSourceOptions } from '../data-source';
-import { APP_PIPE } from '@nestjs/core';
 import { TransactionsModule } from './transactions/transactions.module';
 import { ProfileModule } from './profile/profile.module';
 import { AuthModule } from './auth/auth.module';
+import config from './common/config';
 
 @Module({
   imports: [
     UsersModule,
+    ConfigModule.forRoot({
+      load: [config],
+    }),
     TypeOrmModule.forRoot(dataSourceOptions),
     TransactionsModule,
     ProfileModule,
     AuthModule,
   ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_PIPE,
-      useValue: new ValidationPipe({ whitelist: true }),
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +10,7 @@ import {
 } from 'typeorm';
 import { Profile } from './profile.entity';
 import { Transaction } from './transaction.entity';
+import { Role } from './role.entity';
 
 @Entity()
 @Unique(['email'])
@@ -22,16 +24,23 @@ export class User {
   @Column()
   password: string;
 
+  @Column()
+  profileId: number;
+
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions: Transaction[];
 
-  @Column({
-    default: false,
+  @Column()
+  roleId: number;
+
+  @OneToOne(() => Role, (role) => role.user)
+  @JoinColumn({
+    name: 'roleId',
   })
-  admin: boolean;
+  role: Role;
 
   @CreateDateColumn()
   createdAt: Date;

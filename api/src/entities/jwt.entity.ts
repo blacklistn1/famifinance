@@ -2,18 +2,18 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
-@Unique(['email'])
 export class Jwt {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  email: string;
+  userId: number;
 
   @Column()
   token: string;
@@ -25,4 +25,7 @@ export class Jwt {
     onUpdate: 'current_timestamp()',
   })
   expiresAt: Date;
+
+  @ManyToOne(() => User)
+  user: User;
 }

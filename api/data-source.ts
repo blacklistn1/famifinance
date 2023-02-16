@@ -1,18 +1,20 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
+import { config } from 'dotenv';
+config();
 
 const dataSourceOptions = {
-  synchronize: true,
-  dropSchema: false,
-  database: 'famifinance',
+  synchronize: !!parseFloat(process.env.DB_SYNCHRONIZE),
+  dropSchema: !!parseFloat(process.env.DB_DROP_SCHEMA),
+  database: process.env.DB_NAME,
 };
 
 if (['development', 'production'].includes(process.env.NODE_ENV)) {
   Object.assign(dataSourceOptions, {
-    type: 'mariadb',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: '123123123',
+    type: process.env.DB_TYPE,
+    host: process.env.DB_HOST,
+    port: parseFloat(process.env.DB_PORT),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
     entities: [__dirname + '/src/**/*.entity.js'],
   });
 }

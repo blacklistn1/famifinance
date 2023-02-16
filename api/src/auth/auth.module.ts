@@ -9,8 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { config } from 'dotenv';
 import { LocalGuard } from './strategies/local/local.guard';
 import { LocalStrategy } from './strategies/local/local.strategy';
-import { JwtStrategy } from './strategies/jwt/jwt.strategy';
-import { JwtGuard } from './strategies/jwt/jwt.guard';
+import { JwtAccessStrategy } from './strategies/jwt/jwt-access.strategy';
+import { JwtGuard } from './strategies/jwt/jwt-access.guard';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Jwt } from '../entities/jwt.entity';
 import { JwtService } from './jwt.service';
@@ -34,7 +34,7 @@ config();
     AuthService,
     LocalGuard,
     LocalStrategy,
-    JwtStrategy,
+    JwtAccessStrategy,
     JwtGuard,
     JwtService,
   ],

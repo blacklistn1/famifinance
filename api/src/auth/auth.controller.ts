@@ -6,21 +6,19 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { LocalGuard } from './strategies/local/local.guard';
 import { AuthService } from './auth.service';
-import { JwtGuard } from './strategies/jwt/jwt.guard';
+import { JwtAccessGuard } from './strategies';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(LocalGuard)
   @Post('/')
   async login(@Request() req: any) {
     return await this.authService.login(req.user);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(JwtAccessGuard)
   @Get('/whoami')
   whoAmI(@Request() req: any) {
     return req.user;

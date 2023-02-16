@@ -1,0 +1,2 @@
+TODO: update auth routes và user routes
+chuyển auth routes về auth folder, user routes (quản lý user) về user folder

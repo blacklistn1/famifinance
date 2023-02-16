@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Jwt } from '../entities';
@@ -51,7 +51,11 @@ export class JwtService {
     return this.repo.save(newToken);
   }
 
-  refreshToken(token: string) {}
+  refreshToken(payload: JwtPayload): Promise<Tokens> {
+    return this.signToken(payload);
+  }
 
-  removeToken(userId: number) {}
+  removeToken(token: string): Promise<DeleteResult> {
+    return this.repo.delete({ token });
+  }
 }

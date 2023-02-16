@@ -1,22 +1,14 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { UsersController } from './users.controller';
+import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
-import { Transaction } from '../entities/transaction.entity';
-import { CurrentUserMiddleware } from './middlewares/current-user.middleware';
-import { Profile } from '../entities/profile.entity';
+import { User } from '../entities';
+import { Transaction } from '../entities';
+import { Profile } from '../entities';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Transaction, Profile])],
-  controllers: [UsersController],
-  providers: [UsersService, AuthService],
+  controllers: [],
+  providers: [UsersService],
   exports: [UsersService],
 })
-export class UsersModule {
-  //Automatically fetch for current user for all user routes
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CurrentUserMiddleware).forRoutes('*');
-  }
-}
+export class UsersModule {}

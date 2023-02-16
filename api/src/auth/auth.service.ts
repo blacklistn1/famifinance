@@ -1,50 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
-import { SignInDto } from '../users/dtos/sign-in.dto';
-import { encryptPassword } from '../common/helper';
-import { JwtService as NestJwtService } from '@nestjs/jwt';
-import { JwtService } from './jwt.service';
+import { SignInDto, SignUpDto } from '../common/dtos';
+import { encryptionOptions } from '../common/constants';
+import { JwtService } from '../jwt';
+import { Tokens } from '../common/types';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private nestJwtService: NestJwtService,
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(credentials: SignInDto) {
-    const user = await this.usersService.findOneByEmail(credentials.email);
-    if (!user) return null;
-    const [salt, storedPassword] = user.password.split('.');
-    const encPassword = await encryptPassword(credentials.password, salt, 32);
-    if (encPassword.toString('hex') !== storedPassword) {
-      return null;
-    }
-    const { password, ...rest } = user;
-    return rest;
+  /**
+   * Sign up new user and sign new tokens
+   * @param  {SignUpDto} payload
+   * @return {Promise<Tokens>}
+   */
+  async signUp(payload: SignUpDto): Promise<Tokens> {
+    const { email, password } = payload;
+    const user = await this.usersService.findOneByEmail(email);
+    if (user) throw new BadRequestException('User already exists');
+    const encPassword = await bcrypt.hash(
+      password,
+      encryptionOptions.saltRounds,
+    );
+    const newUser = await this.usersService.create({
+      email,
+      password: encPassword,
+      firstName: payload.firstName,
+      lastName: payload.lastName || null,
+    });
+    return this.jwtService.signToken({
+      id: newUser.id,
+      email: newUser.email,
+    });
   }
 
   /**
    * login using jwt
-   * @param body
-   * @return {{accessToken: string}}
+   * @param {SignInDto} payload
+   * @return {Promise<Tokens>}
    */
-  async login(body: any) {
-    //extract email from the req body
-    const { id, email } = body;
-    //Find the token in the registered tokens
-    const { token } = await this.jwtService.findOne(email);
-    //If exists, return the token
-    if (token) return { accessToken: token };
-    //If not, register a new one then return
-    else {
-      const newToken = this.jwtService.sign({ id, email });
-      return {
-        accessToken: newToken,
-      };
-    }
-    // const token = await this.jwtService.findOne(email);
+  async signIn(payload: SignInDto) {
+    const { email, password } = payload;
+    const user = await this.usersService.findOneByEmail(email);
+    const compareResult = await bcrypt.compare(password, user.password);
+    if (!compareResult) throw new BadRequestException('Incorrect password');
+    return this.jwtService.signToken({
+      id: user.id,
+      email,
+    });
   }
 
   async refreshToken() {

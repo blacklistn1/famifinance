@@ -11,7 +11,7 @@ import { TransactionsService } from './transactions.service';
 import { AuthGuard } from '../users/guards/auth.guard';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 import { Serialize } from '../users/interceptors/serialize.interceptor';
 import { CurrentUserDto } from './dtos/current-user.dto';
 

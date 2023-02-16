@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -8,14 +9,15 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAccessGuard } from './strategies';
+import { SignInDto } from '../common/dtos';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/')
-  async login(@Request() req: any) {
-    return await this.authService.login(req.user);
+  async signIn(@Body() body: SignInDto) {
+    return await this.authService.signIn(body);
   }
 
   @UseGuards(JwtAccessGuard)

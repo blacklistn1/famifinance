@@ -1,12 +1,11 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsService } from './transactions.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Transaction } from '../entities/transaction.entity';
-import { User } from '../entities/user.entity';
-import { CurrentUserMiddleware } from '../users/middlewares/current-user.middleware';
+import { Transaction } from '../entities';
+import { User } from '../entities';
 import { UsersModule } from '../users/users.module';
-import { Category } from '../entities/category.entity';
+import { Category } from '../entities';
 
 @Module({
   imports: [
@@ -16,11 +15,4 @@ import { Category } from '../entities/category.entity';
   controllers: [TransactionsController],
   providers: [TransactionsService],
 })
-export class TransactionsModule {
-  /**
-   * Always check for authenticated user
-   */
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CurrentUserMiddleware).forRoutes('*');
-  }
-}
+export class TransactionsModule {}

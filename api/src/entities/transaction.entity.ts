@@ -14,8 +14,11 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
-  user: User;
+  @Column()
+  userId: number;
+
+  @Column()
+  categoryId: number;
 
   @Column()
   title: string;
@@ -25,9 +28,6 @@ export class Transaction {
   })
   description: string;
 
-  @ManyToOne(() => Category)
-  category: Category;
-
   @Column()
   amount: number;
 
@@ -36,4 +36,10 @@ export class Transaction {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User)
+  user: User;
+
+  @ManyToOne(() => Category)
+  category: Category;
 }

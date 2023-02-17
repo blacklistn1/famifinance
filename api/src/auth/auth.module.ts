@@ -4,20 +4,22 @@ import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';
-import { config } from 'dotenv';
-import { JwtAccessStrategy } from './strategies';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Jwt } from '../entities';
-config();
+import {
+  JwtAccessGuard,
+  JwtAccessStrategy,
+  JwtRefreshGuard,
+  JwtRefreshStrategy,
+} from './strategies';
 
 @Module({
-  imports: [
-    UsersModule,
-    PassportModule,
-    JwtModule.register({}),
-    TypeOrmModule.forFeature([Jwt]),
-  ],
+  imports: [UsersModule, PassportModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, JwtAccessStrategy],
+  providers: [
+    AuthService,
+    JwtAccessStrategy,
+    JwtAccessGuard,
+    JwtRefreshStrategy,
+    JwtRefreshGuard,
+  ],
 })
 export class AuthModule {}

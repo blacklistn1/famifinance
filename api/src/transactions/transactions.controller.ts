@@ -8,34 +8,38 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
-import { AuthGuard } from '../users/guards/auth.guard';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { CurrentUser } from '../users/decorators/current-user.decorator';
-import { User } from '../entities';
-import { Serialize } from '../users/interceptors/serialize.interceptor';
+import { Serialize } from '../common/interceptors/serialize.interceptor';
 import { CurrentUserDto } from './dtos/current-user.dto';
+import { JwtAccessGuard } from '../auth/strategies';
+import { JwtPayload } from '../common/types';
+import { Transaction } from '../entities';
 
 @Controller('transactions')
+@UseGuards(JwtAccessGuard)
 export class TransactionsController {
   constructor(private transactionsService: TransactionsService) {}
 
-  @UseGuards(AuthGuard)
   @Post('/')
-  async createTransaction(
+  createTransaction(
     @Body() body: CreateTransactionDto,
-    @CurrentUser() user: User,
-  ) {
-    return await this.transactionsService.createOne(body, user);
+    @CurrentUser() user: JwtPayload,
+  ): Promise<Transaction> {
+    return this.transactionsService.createOne(body, user.id);
   }
 
   @Get('/')
   @Serialize(CurrentUserDto)
-  async getTransactions(@CurrentUser() user: User) {
-    return this.transactionsService.getTransactions(user);
+  async getTransactions(@CurrentUser() user: JwtPayload) {
+    return this.transactionsService.getTransactions(user.id);
   }
 
   @Patch('/:id')
-  async updateTransaction(@Param('id') id: number, @CurrentUser() user: User) {
+  async updateTransaction(
+    @Param('id') id: number,
+    @CurrentUser() user: JwtPayload,
+  ) {
     return { id, user };
   }
 }

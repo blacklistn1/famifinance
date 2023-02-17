@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Transaction } from '../entities/transaction.entity';
+import { Transaction } from '../entities';
 import { Repository } from 'typeorm';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
-import { User } from '../entities/user.entity';
-import { Category } from '../entities/category.entity';
+import { User } from '../entities';
+import { Category } from '../entities';
 
 @Injectable()
 export class TransactionsService {
@@ -14,18 +14,18 @@ export class TransactionsService {
     @InjectRepository(Category) private cateRepo: Repository<Category>,
   ) {}
 
-  async createOne(transaction: CreateTransactionDto, user: User) {
+  createOne(transaction: CreateTransactionDto, userId: number) {
     const newTransaction = this.repo.create(transaction);
 
-    newTransaction.user = user;
+    newTransaction.userId = userId;
 
-    return await this.repo.save(newTransaction);
+    return this.repo.save(newTransaction);
   }
 
-  async getTransactions(user: User) {
-    return await this.userRepo.findOne({
+  getTransactions(userId: number): Promise<User> {
+    return this.userRepo.findOne({
       where: {
-        id: user.id,
+        id: userId,
       },
       relations: {
         transactions: {

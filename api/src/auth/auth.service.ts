@@ -4,7 +4,8 @@ import { UsersService } from '../users/users.service';
 import { SignInDto, SignUpDto } from '../common/dtos';
 import { encryptionOptions } from '../common/constants';
 import { JwtService } from '../jwt';
-import { Tokens } from '../common/types';
+import { JwtPayload, Tokens } from '../common/types';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -54,10 +55,11 @@ export class AuthService {
     });
   }
 
-  async refreshToken() {
-    //TODO: Refresh token function
-    //Check for a valid token
-    //If no, return error (or logout? Need check)
-    //If yes, search for a valid registered token in the database
+  refreshToken(payload: JwtPayload): Promise<Tokens> {
+    return this.jwtService.refreshToken(payload);
+  }
+
+  signOut(user: JwtPayload & Tokens): Promise<DeleteResult> {
+    return this.jwtService.removeToken(user.refreshToken);
   }
 }

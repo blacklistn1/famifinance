@@ -1,12 +1,12 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { AuthGuard } from '../users/guards/auth.guard';
+import { JwtAccessGuard } from '../auth/strategies';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private profileService: ProfileService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAccessGuard)
   @Get('/:id')
   async getProfile(@Param('id') id: number) {
     return await this.profileService.getProfile(id);

@@ -3,8 +3,8 @@ import { config } from 'dotenv';
 config();
 
 const dataSourceOptions = {
-  synchronize: !!parseFloat(process.env.DB_SYNCHRONIZE),
-  dropSchema: !!parseFloat(process.env.DB_DROP_SCHEMA),
+  synchronize: true,
+  dropSchema: false,
   database: process.env.DB_NAME,
 };
 

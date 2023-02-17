@@ -8,26 +8,33 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAccessGuard } from './strategies';
-import { SignInDto } from '../common/dtos';
+import { JwtRefreshGuard } from './strategies';
+import { SignInDto, SignUpDto } from '../common/dtos';
+import { JwtPayload, Tokens } from '../common/types';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/')
-  async signIn(@Body() body: SignInDto) {
+  async signIn(@Body() body: SignInDto): Promise<Tokens> {
     return await this.authService.signIn(body);
   }
 
-  @UseGuards(JwtAccessGuard)
-  @Get('/whoami')
-  whoAmI(@Request() req: any) {
-    return req.user;
+  @Post('/signup')
+  async signUp(@Body() body: SignUpDto): Promise<Tokens> {
+    return await this.authService.signUp(body);
   }
 
+  @UseGuards(JwtRefreshGuard)
+  @Get('/refresh')
+  async refreshToken(payload: JwtPayload): Promise<Tokens> {
+    return await this.authService.refreshToken(payload);
+  }
+
+  @UseGuards(JwtRefreshGuard)
   @Delete('/logout')
-  logout(@Request() req: any) {
-    req.logout();
+  async logout(@Request() req: any) {
+    return await this.authService.signOut(req.user);
   }
 }

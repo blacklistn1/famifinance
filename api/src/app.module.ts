@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { DataSourceOptions } from 'typeorm';
 import { UsersModule } from './users/users.module';
 import { dataSourceOptions } from '../data-source';
 import { TransactionsModule } from './transactions/transactions.module';
@@ -14,7 +15,7 @@ import config from './common/config';
     ConfigModule.forRoot({
       load: [config],
     }),
-    TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forRoot(dataSourceOptions as DataSourceOptions),
     TransactionsModule,
     ProfileModule,
     AuthModule,

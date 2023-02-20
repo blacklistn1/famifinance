@@ -35,7 +35,7 @@ export class TransactionsService {
     });
   }
 
-  async updateTransaction(id: number, user: User) {
-    return await this.repo.findOneBy({ id });
+  updateTransaction(id: number, user: User) {
+    return 1;
   }
 }

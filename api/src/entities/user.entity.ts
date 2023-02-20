@@ -24,8 +24,18 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   profileId: number;
+
+  @Column({
+    nullable: true,
+  })
+  roleId: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
@@ -33,15 +43,9 @@ export class User {
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions: Transaction[];
 
-  @Column()
-  roleId: number;
-
   @OneToOne(() => Role, (role) => role.user)
   @JoinColumn({
     name: 'roleId',
   })
   role: Role;
-
-  @CreateDateColumn()
-  createdAt: Date;
 }

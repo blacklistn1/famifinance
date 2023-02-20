@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
+import { Profile, User } from '../entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Profile } from '../entities/profile.entity';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { SignUpDto } from '../common/dtos';
 
 @Injectable()
@@ -29,8 +27,8 @@ export class UsersService {
     return user;
   }
 
-  async findOneById(id: number) {
-    return await this.userRepo.findOne({
+  findOneById(id: number): Promise<User> {
+    return this.userRepo.findOne({
       where: { id },
       relations: {
         profile: true,
@@ -38,21 +36,12 @@ export class UsersService {
     });
   }
 
-  async findOneByEmail(email: string) {
-    return await this.userRepo.findOne({
+  findOneByEmail(email: string): Promise<User> {
+    return this.userRepo.findOne({
       where: { email },
       relations: {
         profile: true,
       },
     });
-  }
-
-  async findOneBy<T>(key: T) {
-    switch (typeof key) {
-      case 'number':
-        return await this.findOneById(key);
-      default:
-        return await this.findOneByEmail(key as string);
-    }
   }
 }

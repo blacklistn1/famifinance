@@ -5,34 +5,26 @@ config();
 const dataSourceOptions = {
   synchronize: true,
   dropSchema: false,
+  type: process.env.DB_TYPE,
+  host: process.env.DB_HOST,
+  port: parseFloat(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  entities: [__dirname + '/src/**/*.entity.js'],
 };
 
-if (['development', 'production'].includes(process.env.NODE_ENV)) {
-  Object.assign(dataSourceOptions, {
-    type: process.env.DB_TYPE,
-    host: process.env.DB_HOST,
-    port: parseFloat(process.env.DB_PORT),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    entities: [__dirname + '/src/**/*.entity.js'],
-  });
+if (process.env.NODE_ENV === 'production') {
+  dataSourceOptions.synchronize = false;
 }
 
-if (['production'].includes(process.env.NODE_ENV)) {
-  Object.assign(dataSourceOptions, {
-    synchronize: false,
-  });
-}
-
-if (['testing'].includes(process.env.NODE_ENV)) {
-  Object.assign(dataSourceOptions, {
-    type: 'sqlite',
-    database: ':memory:',
-    dropSchema: true,
-    entities: ['src/**/*.entity.ts'],
-  });
-}
+const testDataSourceOptions = {
+  type: 'sqlite',
+  database: ':memory:',
+  synchronize: true,
+  dropSchema: true,
+  entities: ['src/**/*.entity.ts'],
+};
 
 const typeDS = JSON.parse(JSON.stringify(dataSourceOptions));
 Object.assign(typeDS, {
@@ -41,4 +33,4 @@ Object.assign(typeDS, {
 });
 const dataSource = new DataSource(typeDS as DataSourceOptions);
 
-export { dataSource, dataSourceOptions };
+export { dataSource, dataSourceOptions, testDataSourceOptions };

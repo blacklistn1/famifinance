@@ -12,7 +12,9 @@ export class Jwt {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   userId: number;
 
   @Column()

@@ -4,8 +4,8 @@ import { DeleteResult, Repository } from 'typeorm';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Jwt } from '../entities';
-import { RefreshToken } from '../common/types/refresh-token.type';
-import { JwtPayload, Tokens } from '../common/types/jwt.type';
+import { RefreshToken } from '../common/types';
+import { JwtPayload, Tokens } from '../common/types';
 
 @Injectable()
 export class JwtService {

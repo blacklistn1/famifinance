@@ -1,8 +1,10 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -37,13 +39,16 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
+  @DeleteDateColumn()
+  deletedAt: Date;
+
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;
 
   @OneToMany(() => Transaction, (transaction) => transaction.user)
   transactions: Transaction[];
 
-  @OneToOne(() => Role, (role) => role.user)
+  @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({
     name: 'roleId',
   })

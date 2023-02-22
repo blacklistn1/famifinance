@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../users';
 import { SignInDto, SignUpDto } from '../common/dtos';
-import { encryptionOptions } from '../common/constants';
+import { ENCRYPTION_OPTIONS } from '../common/constants';
 import { JwtService } from '../jwt';
 import { JwtPayload, Tokens } from '../common/types';
 import { DeleteResult } from 'typeorm';
@@ -25,7 +25,7 @@ export class AuthService {
     if (user) throw new BadRequestException('User already exists');
     const encPassword = await bcrypt.hash(
       password,
-      encryptionOptions.saltRounds,
+      ENCRYPTION_OPTIONS.SALT_ROUNDS,
     );
     const newUser = await this.usersService.create({
       email,

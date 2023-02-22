@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
@@ -31,8 +32,11 @@ export class TransactionsController {
 
   @Get('/')
   @Serialize(CurrentUserDto)
-  async getTransactions(@CurrentUser() user: JwtPayload) {
-    return this.transactionsService.getTransactions(user.id);
+  async getTransactions(
+    @CurrentUser() user: JwtPayload,
+    @Query() query: any,
+  ): Promise<Transaction[]> {
+    return this.transactionsService.getTransactions(user.id, query);
   }
 
   @Patch('/:id')

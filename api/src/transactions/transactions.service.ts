@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Transaction } from '../entities';
-import { Repository } from 'typeorm';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
-import { User } from '../entities';
-import { Category } from '../entities';
+import { Category, User } from '../entities';
+import { UpdateTransactionDto } from '../common/dtos';
+import { FindOptions } from '@nestjs/schematics';
 
 @Injectable()
 export class TransactionsService {
@@ -22,20 +23,33 @@ export class TransactionsService {
     return this.repo.save(newTransaction);
   }
 
-  getTransactions(userId: number): Promise<User> {
-    return this.userRepo.findOne({
+  getTransactions(userId: number, options: any): Promise<Transaction[]> {
+    const findOptions: FindOptions = options;
+    return this.repo.find({
       where: {
-        id: userId,
+        userId,
       },
       relations: {
-        transactions: {
-          category: true,
-        },
+        user: true,
+        category: true,
       },
+      ...findOptions,
     });
   }
 
-  updateTransaction(id: number, user: User) {
-    return 1;
+  updateTransaction(
+    id: number,
+    userId: number,
+    payload: UpdateTransactionDto,
+  ): Promise<UpdateResult> {
+    return this.repo.update({ id, userId }, payload);
+  }
+
+  deleteTransaction(id: number): Promise<UpdateResult> {
+    return this.repo.softDelete(id);
+  }
+
+  restoreTransaction(id: number): Promise<UpdateResult> {
+    return this.repo.restore(id);
   }
 }

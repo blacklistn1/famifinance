@@ -8,7 +8,7 @@ import { UpdateTransactionDto } from '../common/dtos';
 import { FindOptions } from '@nestjs/schematics';
 
 @Injectable()
-export class TransactionsService {
+export class TransactionService {
   constructor(
     @InjectRepository(Transaction) private repo: Repository<Transaction>,
     @InjectRepository(User) private userRepo: Repository<User>,

@@ -1,22 +1,22 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from './users';
+import { UserModule } from './user';
 import { dataSourceOptions } from '../data-source';
-import { TransactionsModule } from './transactions/transactions.module';
+import { TransactionModule } from './transaction';
 import { ProfileModule } from './profile/profile.module';
-import { AuthModule } from './auth/auth.module';
-import config from './common/config';
+import { AuthModule } from './auth';
+import mainConfig from './common/config';
 import { DataSourceOptions } from 'typeorm';
 
 @Module({
   imports: [
-    UsersModule,
+    UserModule,
     ConfigModule.forRoot({
-      load: [config],
+      load: [mainConfig],
     }),
     TypeOrmModule.forRoot(dataSourceOptions as DataSourceOptions),
-    TransactionsModule,
+    TransactionModule,
     ProfileModule,
     AuthModule,
   ],

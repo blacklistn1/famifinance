@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SignUpDto } from '../common/dtos';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Profile) private profileRepo: Repository<Profile>,

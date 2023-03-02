@@ -1,10 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { TransactionsService } from '../transactions.service';
+import { TransactionService } from '../transaction.service';
 
 @Injectable()
 export class IsOwnerGuard implements CanActivate {
-  constructor(private transactionsService: TransactionsService) {}
+  constructor(private transactionService: TransactionService) {}
 
   /**
    * Returns true if the authenticated user is the owner of the transaction

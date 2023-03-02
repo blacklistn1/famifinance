@@ -1,40 +1,25 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtRefreshGuard } from './strategies';
-import { SignInDto, SignUpDto } from '../common/dtos';
-import { JwtPayload, Tokens } from '../common/types';
+import { SignInDto } from '../common/dtos';
+import { JwtPayload } from '../common/types';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/')
-  async signIn(@Body() body: SignInDto): Promise<Tokens> {
-    return await this.authService.signIn(body);
-  }
+  async signIn(@Body() body: SignInDto) {}
 
-  @Post('/signup')
-  async signUp(@Body() body: SignUpDto): Promise<Tokens> {
-    return await this.authService.signUp(body);
-  }
-
-  @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
-  async refreshToken(payload: JwtPayload): Promise<Tokens> {
-    return await this.authService.refreshToken(payload);
-  }
+  async refreshToken(payload: JwtPayload) {}
 
-  @UseGuards(JwtRefreshGuard)
   @Delete('/logout')
-  async logout(@Request() req: any) {
-    return await this.authService.signOut(req.user);
+  async logout(@Req() req: any) {}
+
+  /**
+   * Test protected route
+   */
+  protected(@Req() req: any) {
+    return 1;
   }
 }

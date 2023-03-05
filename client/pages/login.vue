@@ -22,8 +22,9 @@
               @input="$v.password.$touch()"
               @blur="$v.password.$touch()"
             ></v-text-field>
-            <v-btn @click="handleSubmit">Submit</v-btn>
+            <v-btn @click="login">Submit</v-btn>
           </v-form>
+          <v-btn @click="() => login(true)">Login with Google+</v-btn>
         </v-card-text>
       </v-card>
     </v-col>
@@ -33,10 +34,6 @@
 <script>
 import { validationMixin } from 'vuelidate';
 import { email, minLength, required } from 'vuelidate/lib/validators';
-
-function mapState(auth, param2) {
-
-}
 
 export default {
   mixins: [validationMixin],
@@ -55,10 +52,6 @@ export default {
     password: ''
   }),
   computed: {
-    ...mapState('user', {
-      userEmail: 'email',
-      userFirstName: 'firstName',
-    }),
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
@@ -74,16 +67,47 @@ export default {
       return errors;
     }
   },
+  mounted() {
+    // Get query string from the fullPath
+    // const query = this.$router.currentRoute.query
+    // const queryKeys = new Set(Object.keys(query))
+    // if (queryKeys.has('state') && queryKeys.has('code') && queryKeys.has('authuser')) {
+    //   const fullPath = this.$router.currentRoute.fullPath
+    //   const queryStringIndex = fullPath.indexOf('?')
+    //   let hashIndex = fullPath.indexOf('#')
+    //   if (hashIndex < queryStringIndex) hashIndex = fullPath.length
+    //   this.$axios.$get('/', {
+    //     params: this.$router.currentRoute.query
+    //   })
+    //     .then(tokens => {
+    //       this.$auth.setUserToken(tokens)
+    //     })
+    // }
+  },
   methods: {
-    async handleSubmit() {
-      this.$v.$touch();
-      const res = await this.$axios.post('/auth', {
-        email: this.email,
-        password: this.password,
-      });
-      console.log(res.headers);
-    }
-  }
+    async login(withGoogle = false) {
+      if (withGoogle) {
+        await this.$auth.loginWith('google', {
+          params: {
+            prompt: 'select_account',
+            include_granted_scope: true,
+          },
+        }).then()
+      } else {
+        this.$v.$touch();
+        await this.$auth.loginWith('local', {
+          data: {
+            email: this.email,
+            password: this.password,
+          },
+        })
+          .then(() => {
+            return this.$router.push('/')
+          })
+          .then()
+      }
+    },
+  },
 }
 </script>
 

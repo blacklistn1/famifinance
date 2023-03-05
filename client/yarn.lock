@@ -3729,6 +3729,7 @@ __metadata:
     "@nuxtjs/stylelint-module": ^4.1.0
     "@nuxtjs/vuetify": ^1.12.3
     core-js: ^3.25.3
+    dotenv: ^16.0.3
     eslint: ^8.24.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-nuxt: ^4.0.0
@@ -3744,7 +3745,7 @@ __metadata:
     vue-server-renderer: ^2.7.10
     vue-template-compiler: ^2.7.10
     vuelidate: ^0.7.7
-    vuetify: ^2.6.10
+    vuetify: ^2.6.14
   languageName: unknown
   linkType: soft
 
@@ -4807,6 +4808,13 @@ __metadata:
   dependencies:
     is-obj: ^2.0.0
   checksum: d5775790093c234ef4bfd5fbe40884ff7e6c87573e5339432870616331189f7f5d86575c5b5af2dcf0f61172990f4f734d07844b1f23482fff09e3c4bead05ea
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.3":
+  version: 16.0.3
+  resolution: "dotenv@npm:16.0.3"
+  checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
   languageName: node
   linkType: hard
 
@@ -12587,12 +12595,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vuetify@npm:^2.6, vuetify@npm:^2.6.10":
+"vuetify@npm:^2.6":
   version: 2.6.13
   resolution: "vuetify@npm:2.6.13"
   peerDependencies:
     vue: ^2.6.4
   checksum: c2b5ac22a760f68d7e7503c9c900a87a9180a171a45700466b0a9d8b3fb99d5250668f38d6d50c16adfa71bce2afcad8c1e03398b5d0ad25bc318f32dae2f974
+  languageName: node
+  linkType: hard
+
+"vuetify@npm:^2.6.14":
+  version: 2.6.14
+  resolution: "vuetify@npm:2.6.14"
+  peerDependencies:
+    vue: ^2.6.4
+  checksum: edeb8c55a7b6b315de7464bd3e0e9aa12a4894b873289aa8a8ae0fa37c7481b16229351658e5d7fba559ba4f6a6b84a1681e40bc0d8b17f074edd9832bd4d5db
   languageName: node
   linkType: hard
 

@@ -1,5 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
-
+import { config } from 'dotenv'
+config()
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -46,30 +47,21 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3030',
   },
 
   // Auth module
   auth: {
     strategies: {
-      local: false,
-      cookie: {
-        token: {
-          property: 'Set-Cookie',
-          name: 'Cookie',
-          type: 'connect.sid',
-          required: true,
-        },
-        endpoints: {
-          login: { url: '/auth', method: 'post' },
-          logout: { url: '/auth/signout', method: 'delete' },
-          user: { url: '/auth/whoami', method: 'get' }
-        },
-        user: {
-          property: 'data',
-        }
-      }
-    }
+      google: {
+        clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
+        redirectUri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
+        responseType: 'code',
+        accessType: 'offline',
+        includeGrantedScope: true,
+        codeChallengeMethod: '',
+      },
+    },
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -94,9 +86,6 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     postcss: false,
-  },
-
-  server: {
-    port: 3030,
+    transpile: ['auth-next'],
   },
 }

@@ -8,6 +8,7 @@ import { ProfileModule } from './profile/profile.module';
 import { AuthModule } from './auth';
 import mainConfig from './common/config';
 import { DataSourceOptions } from 'typeorm';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DataSourceOptions } from 'typeorm';
     ProfileModule,
     AuthModule,
   ],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}

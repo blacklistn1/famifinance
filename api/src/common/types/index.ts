@@ -1,2 +1,2 @@
-export * from './jwt.type';
+export * from './token.type';
 export * from './refresh-token.type';

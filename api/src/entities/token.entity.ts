@@ -8,7 +8,7 @@ import {
 import { User } from './user.entity';
 
 @Entity()
-export class Jwt {
+export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,6 +19,12 @@ export class Jwt {
 
   @Column()
   token: string;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  idToken: string;
 
   @CreateDateColumn()
   createdAt: Date;

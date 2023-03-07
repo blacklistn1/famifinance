@@ -1,4 +1,4 @@
-export * from './jwt.entity';
+export * from './token.entity';
 export * from './category.entity';
 export * from './profile.entity';
 export * from './role.entity';

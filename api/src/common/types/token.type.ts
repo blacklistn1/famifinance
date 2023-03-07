@@ -5,8 +5,8 @@ export interface TokenPayload {
 
 /**
  * @interface Tokens
- * @property {string} access_token
- * @property {string} refresh_token
+ * @property {string} [access_token]  - Access token
+ * @property {string} [refresh_token] - Refresh Token
  */
 export interface Tokens {
   access_token?: string;

@@ -1,33 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { OAuth2Client, Credentials } from 'google-auth-library';
 import { UserService } from '../../user';
-import { OAuth2Client } from 'google-auth-library';
-import { ConfigService } from '@nestjs/config';
 import { GoogleOAuthService } from './google.service';
 import { Tokens } from '../../common/types';
-import { google } from 'googleapis';
 
 @Injectable()
 export class AuthService {
   private readonly gc: OAuth2Client;
   constructor(
-    private usersService: UserService,
-    private readonly configService: ConfigService,
+    private userService: UserService,
     private readonly googleOAuthService: GoogleOAuthService,
   ) {
     this.gc = this.googleOAuthService.GoogleClient;
   }
 
-  async login(code: string) {
+  async login(code: string): Promise<Credentials> {
+    //TODO: save user token to the db
     return (await this.gc.getToken(code)).tokens;
-  }
-
-  refreshToken() {
-    this.gc.on('tokens', (tokens) => {
-      if (tokens.access_token) {
-        this.gc.setCredentials(tokens);
-        return { accessToken: tokens.access_token };
-      }
-    });
   }
 
   async getUser(tokens: Tokens) {
@@ -36,7 +25,8 @@ export class AuthService {
     return res.data;
   }
 
-  logout() {
+  logout(tokens: Tokens) {
+    this.gc.setCredentials(tokens);
     return this.gc.revokeCredentials();
   }
 }

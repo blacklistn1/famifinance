@@ -20,7 +20,7 @@ export class GoogleOAuthService {
     });
   }
 
-  get GoogleClient() {
+  get GoogleClient(): OAuth2Client {
     return this.googleClient;
   }
 

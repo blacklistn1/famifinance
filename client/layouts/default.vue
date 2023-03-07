@@ -40,10 +40,7 @@
       <v-btn v-if="!$auth.loggedIn" nuxt to="/login">
         Login
       </v-btn>
-      <v-btn v-if="!$auth.loggedIn" nuxt to="/register">
-        Register
-      </v-btn>
-      <v-btn v-else @click.prevent="logout">
+      <v-btn v-else @click="logout">
         Logout
       </v-btn>
     </v-app-bar>
@@ -82,7 +79,7 @@ export default {
   },
   methods: {
     logout() {
-      console.log('Logout');
+      this.$auth.logout()
     }
   }
 }

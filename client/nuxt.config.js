@@ -47,15 +47,34 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'http://localhost:3030',
+    baseURL: process.env.API_DEV_BASE_URL,
   },
 
   // Auth module
   auth: {
+    redirect: {
+      home: '/',
+    },
     strategies: {
       google: {
+        endpoints: {
+          authorization: 'https://accounts.google.com/o/oauth2/v2/auth',
+          token: process.env.GOOGLE_OAUTH_ENDPOINT_TOKEN,
+          userInfo: process.env.GOOGLE_OAUTH_ENDPOINT_USERINFO,
+          logout: process.env.GOOGLE_OAUTH_ENDPOINT_LOGOUT,
+        },
+        token: {
+          property: 'access_token',
+          type: 'Bearer',
+          maxAge: 3600,
+        },
+        refreshToken: {
+          property: 'refresh_token',
+          maxAge: 60 * 60 * 24 * 365,
+        },
         clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
         redirectUri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
+        logoutRedirectUri: process.env.GOOGLE_OAUTH_LOGOUT_REDIRECT_URI,
         responseType: 'code',
         accessType: 'offline',
         includeGrantedScope: true,

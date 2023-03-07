@@ -32,9 +32,8 @@
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate';
-import { email, minLength, required } from 'vuelidate/lib/validators';
-
+import { validationMixin } from 'vuelidate'
+import { email, minLength, required } from 'vuelidate/lib/validators'
 export default {
   mixins: [validationMixin],
   validations: {
@@ -67,23 +66,6 @@ export default {
       return errors;
     }
   },
-  mounted() {
-    // Get query string from the fullPath
-    // const query = this.$router.currentRoute.query
-    // const queryKeys = new Set(Object.keys(query))
-    // if (queryKeys.has('state') && queryKeys.has('code') && queryKeys.has('authuser')) {
-    //   const fullPath = this.$router.currentRoute.fullPath
-    //   const queryStringIndex = fullPath.indexOf('?')
-    //   let hashIndex = fullPath.indexOf('#')
-    //   if (hashIndex < queryStringIndex) hashIndex = fullPath.length
-    //   this.$axios.$get('/', {
-    //     params: this.$router.currentRoute.query
-    //   })
-    //     .then(tokens => {
-    //       this.$auth.setUserToken(tokens)
-    //     })
-    // }
-  },
   methods: {
     async login(withGoogle = false) {
       if (withGoogle) {
@@ -92,20 +74,24 @@ export default {
             prompt: 'select_account',
             include_granted_scope: true,
           },
-        }).then()
-      } else {
-        this.$v.$touch();
-        await this.$auth.loginWith('local', {
-          data: {
-            email: this.email,
-            password: this.password,
-          },
         })
-          .then(() => {
-            return this.$router.push('/')
-          })
-          .then()
+          .catch(e => console.log(e))
+      } else {
+        await this.loginLocal()
       }
+    },
+    async loginLocal() {
+      this.$v.$touch();
+      await this.$auth.loginWith('local', {
+        data: {
+          email: this.email,
+          password: this.password,
+        },
+      })
+        .then(() => {
+          return this.$router.push('/')
+        })
+        .catch(e => console.error(e))
     },
   },
 }

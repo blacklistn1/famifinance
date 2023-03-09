@@ -15,8 +15,15 @@ export class AuthService {
   }
 
   async login(code: string): Promise<Credentials> {
-    //TODO: save user token to the db
-    return (await this.gc.getToken(code)).tokens;
+    const tokens = (await this.gc.getToken(code)).tokens;
+    this.gc.setCredentials(tokens);
+    const user = await this.googleOAuthService.getUserProfile();
+    const tokenInfo = await this.gc.getTokenInfo(tokens.access_token);
+    const existingUser = this.userService.findOneByEmail(tokenInfo.email);
+    if (existingUser) {
+      // await this.userService.create({});
+    }
+    return tokens;
   }
 
   async getUser(tokens: Tokens) {

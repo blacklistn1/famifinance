@@ -11,7 +11,7 @@ const dataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: ['./**/*.entity.js'],
+  entities: [__dirname + '/**/*.entity.js'],
 };
 
 if (process.env.NODE_ENV === 'production') {
@@ -23,7 +23,7 @@ const testDataSourceOptions = {
   database: ':memory:',
   synchronize: true,
   dropSchema: true,
-  entities: ['src/**/*.entity.ts'],
+  entities: ['./**/*.entity.ts'],
 };
 
 const typeDS = JSON.parse(JSON.stringify(dataSourceOptions));

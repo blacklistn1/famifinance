@@ -6,18 +6,19 @@ import {
   IsString,
 } from 'class-validator';
 
-export class SignUpDto {
+export class CreateUserDto {
   @IsDefined()
   @IsString()
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @IsDefined()
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  password: string;
+  password?: string;
 
+  @IsDefined()
   @IsString()
   @IsNotEmpty()
   firstName: string;
@@ -25,4 +26,12 @@ export class SignUpDto {
   @IsOptional()
   @IsString()
   lastName?: string;
+
+  @IsOptional()
+  @IsString()
+  locale: string;
+
+  @IsOptional()
+  @IsString()
+  picture: string;
 }

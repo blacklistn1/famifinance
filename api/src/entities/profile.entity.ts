@@ -26,7 +26,21 @@ export class Profile {
   @Column({
     nullable: true,
   })
-  lastName: string;
+  lastName?: string;
+
+  /**
+   * User's full name
+   */
+  @Column()
+  name: string;
+
+  @Column()
+  locale: string;
+
+  @Column({
+    nullable: true,
+  })
+  picture?: string;
 
   @Column()
   balance: number;

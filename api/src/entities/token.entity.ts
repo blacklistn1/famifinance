@@ -3,9 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Scope } from './scope.entity';
 
 @Entity()
 export class Token {
@@ -20,20 +22,15 @@ export class Token {
   @Column()
   token: string;
 
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
-  idToken: string;
-
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({
-    onUpdate: 'current_timestamp()',
-  })
-  expiresAt: Date;
+  @Column()
+  expiryDate: number;
 
   @ManyToOne(() => User)
   user: User;
+
+  @OneToMany(() => Scope, (scope) => scope.token)
+  scopes: Scope[];
 }

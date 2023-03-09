@@ -13,6 +13,7 @@ import {
 import { Profile } from './profile.entity';
 import { Transaction } from './transaction.entity';
 import { Role } from './role.entity';
+import { Token } from './token.entity';
 
 @Entity()
 @Unique(['email'])
@@ -27,6 +28,9 @@ export class User {
     nullable: true,
   })
   password?: string;
+
+  @Column()
+  emailVerified: boolean;
 
   @Column({
     nullable: true,
@@ -43,6 +47,9 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToMany(() => Token, (token) => token.user)
+  tokens: Token[];
 
   @OneToOne(() => Profile, (profile) => profile.user)
   profile: Profile;

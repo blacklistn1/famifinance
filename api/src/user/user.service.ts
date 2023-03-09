@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { Profile, User } from '../entities';
+import { InsertResult, Repository } from 'typeorm';
+import { Profile, Role, User } from '../entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SignUpDto } from '../common/dtos';
+import { CreateUserDto } from '../common/dtos';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Profile) private profileRepo: Repository<Profile>,
+    @InjectRepository(Role) private roleRepo: Repository<Role>,
   ) {}
 
-  async create(body: SignUpDto): Promise<User> {
+  async create(payload: CreateUserDto): Promise<User> {
     const newUser = this.userRepo.create({
-      email: body.email,
-      password: body.password,
+      email: payload.email,
+      password: payload.password || null,
     });
     const user = await this.userRepo.save(newUser);
     const profile = this.profileRepo.create({
       user,
       balance: 0,
-      firstName: body.firstName,
-      lastName: body.lastName || null,
+      firstName: payload.firstName,
+      lastName: payload.lastName || null,
     });
     await this.profileRepo.save(profile);
     return user;

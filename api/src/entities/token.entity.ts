@@ -28,9 +28,15 @@ export class Token {
   @Column()
   expiryDate: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.tokens, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   user: User;
 
-  @OneToMany(() => Scope, (scope) => scope.token)
+  @OneToMany(() => Scope, (scope) => scope.token, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   scopes: Scope[];
 }

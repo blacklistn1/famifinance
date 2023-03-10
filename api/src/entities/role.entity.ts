@@ -6,9 +6,14 @@ export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   name: string;
 
-  @OneToMany(() => User, (user) => user.role)
+  @OneToMany(() => User, (user) => user.role, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   users: User[];
 }

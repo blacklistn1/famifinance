@@ -28,7 +28,7 @@ export class GoogleOAuthService {
     return this.googleClient.getRequestHeaders();
   }
 
-  getUserProfile(options = {}) {
-    return google.oauth2('v2').userinfo.v2.me.get(options);
+  async getUserProfile(options = {}) {
+    return (await google.oauth2('v2').userinfo.v2.me.get(options)).data;
   }
 }

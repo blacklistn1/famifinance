@@ -11,9 +11,17 @@ export class Scope {
   })
   profileId: number;
 
+  @Column({
+    nullable: true,
+  })
+  tokenId: number;
+
   @Column()
   name: string;
 
-  @ManyToOne(() => Token)
+  @ManyToOne(() => Token, (token) => token.scopes, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   token: Token;
 }

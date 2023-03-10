@@ -2,10 +2,10 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 config();
 
-const dataSourceOptions = {
+const dataSourceOptions: DataSourceOptions = {
   synchronize: true,
   dropSchema: false,
-  type: process.env.DB_TYPE,
+  type: process.env.DB_TYPE as 'mysql' | 'mariadb' | 'mssql',
   host: process.env.DB_HOST,
   port: parseFloat(process.env.DB_PORT),
   username: process.env.DB_USERNAME,
@@ -15,7 +15,7 @@ const dataSourceOptions = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  dataSourceOptions.synchronize = false;
+  Object.assign(dataSourceOptions.synchronize, false);
 }
 
 const testDataSourceOptions = {
@@ -28,8 +28,8 @@ const testDataSourceOptions = {
 
 const typeDS = JSON.parse(JSON.stringify(dataSourceOptions));
 Object.assign(typeDS, {
-  entities: ['src/**/*.entity.ts'],
-  migrations: ['src/migrations/*.ts'],
+  entities: ['./**/*.entity.{js,ts}'],
+  migrations: ['./**/migrations/*.ts'],
 });
 const dataSource = new DataSource(typeDS as DataSourceOptions);
 

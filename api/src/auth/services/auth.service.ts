@@ -18,18 +18,27 @@ export class AuthService {
     const tokens = (await this.gc.getToken(code)).tokens;
     this.gc.setCredentials(tokens);
     const user = await this.googleOAuthService.getUserProfile();
-    const tokenInfo = await this.gc.getTokenInfo(tokens.access_token);
-    const existingUser = this.userService.findOneByEmail(tokenInfo.email);
-    if (existingUser) {
-      // await this.userService.create({});
+    const existingUser = await this.userService.findOneByEmail(user.email);
+    const payload = {
+      email: user.email,
+      emailVerified: user.verified_email,
+      firstName: user.given_name,
+      lastName: user.family_name || null,
+      locale: user.locale,
+      name: user.name,
+      picture: user.picture,
+    };
+    if (!existingUser) {
+      await this.userService.create(payload);
+    } else {
+      await this.userService.updateUserProfile(payload);
     }
     return tokens;
   }
 
-  async getUser(tokens: Tokens) {
+  getUser(tokens: Tokens) {
     this.gc.setCredentials(tokens);
-    const res = await this.googleOAuthService.getUserProfile({});
-    return res.data;
+    return this.googleOAuthService.getUserProfile({});
   }
 
   logout(tokens: Tokens) {

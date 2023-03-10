@@ -15,10 +15,14 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   userId: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   categoryId: number;
 
   @Column()
@@ -41,9 +45,15 @@ export class Transaction {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   user: User;
 
-  @ManyToOne(() => Category)
+  @ManyToOne(() => Category, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   category: Category;
 }

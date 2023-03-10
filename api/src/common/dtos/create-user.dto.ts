@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDefined,
   IsEmail,
   IsNotEmpty,
@@ -12,6 +13,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
+  @IsBoolean()
+  emailVerified: boolean;
 
   @IsOptional()
   @IsString()
@@ -30,6 +34,9 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   locale: string;
+
+  @IsString()
+  name: string;
 
   @IsOptional()
   @IsString()

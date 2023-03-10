@@ -48,16 +48,28 @@ export class User {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @OneToMany(() => Token, (token) => token.user)
+  @OneToMany(() => Token, (token) => token.user, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   tokens: Token[];
 
-  @OneToOne(() => Profile, (profile) => profile.user)
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   profile: Profile;
 
-  @OneToMany(() => Transaction, (transaction) => transaction.user)
+  @OneToMany(() => Transaction, (transaction) => transaction.user, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   transactions: Transaction[];
 
-  @ManyToOne(() => Role, (role) => role.users)
+  @ManyToOne(() => Role, (role) => role.users, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({
     name: 'roleId',
   })

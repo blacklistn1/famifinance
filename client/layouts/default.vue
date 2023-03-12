@@ -37,14 +37,37 @@
       </v-btn>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer />
-      <v-btn v-if="!$auth.loggedIn" nuxt to="/login">
-        Login
+      <v-menu v-if="$auth.loggedIn" open-on-hover :offset-y="true">
+        <template #activator="{ on, attrs }">
+          <v-btn
+            color="primary"
+            dark
+            v-bind="attrs"
+            v-on="on"
+          >
+            Hello {{ $auth.user.name }}
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in authLinks"
+            :key="index"
+            :to="item.to"
+            nuxt
+            exact
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-btn v-if="!$auth.loggedIn" color="red darken-1" class="white--text" @click="login">
+        Login with Google+
       </v-btn>
       <v-btn v-else @click="logout">
         Logout
       </v-btn>
     </v-app-bar>
-    <v-main>
+    <v-main class="grey lighten-4">
       <v-container>
         <Nuxt />
       </v-container>
@@ -67,9 +90,15 @@ export default {
           to: '/',
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire',
+          icon: 'mdi-poll',
+          title: 'Profile',
+          to: '/transactions',
+        },
+      ],
+      authLinks: [
+        {
+          title: 'Profile',
+          to: '/profile',
         },
       ],
       miniVariant: false,
@@ -78,6 +107,13 @@ export default {
     }
   },
   methods: {
+    login() {
+      this.$auth.loginWith('google', {
+        params: {
+          prompt: 'select_account',
+        }
+      })
+    },
     logout() {
       this.$auth.logout()
     }

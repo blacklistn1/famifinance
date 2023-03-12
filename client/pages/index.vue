@@ -1,83 +1,132 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
+  <v-container>
+    <v-row justify="center" align="center">
+      <v-col v-if="!$auth.loggedIn" cols="6">
+        <v-card>
+          <v-card-title class="text-h4">
+            Welcome to FamiFinance
+          </v-card-title>
+          <v-spacer class="my-16"></v-spacer>
+          <v-card-actions class="flex justify-center">
+            <v-btn class="red accent-2 white--text font-weight-bold pa-5" @click="loginWithGoogle">
+              login with google+
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col v-if="$auth.loggedIn" cols="12">
+        <v-row align-content="stretch">
+          <v-col cols="4">
+            <v-card min-height="100%">
+              <v-card-title>
+                Balance
+              </v-card-title>
+              <v-card-text>
+                <span class="text-h3 font-weight-bold">10.000.000</span>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card min-height="100%">
+              <v-card-title>
+                Income this month
+              </v-card-title>
+              <v-card-text>
+                <span class="text-h3 font-weight-bold">5.000.000</span>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card min-height="100%">
+              <v-card-title>
+                Latest transaction
+              </v-card-title>
+              <v-card-text>
+                <span class="text-h5">Tiền xăng xe: </span>
+                <span class="text-h3 font-weight-bold">80.000</span>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row v-if="$auth.loggedIn">
+      <v-col cols="12">
+        <v-simple-table>
+          <template #default>
+            <thead>
+            <tr>
+              <th>Tên</th>
+              <th>Số tiền</th>
+              <th>Mục</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="ts in transactions" :key="ts.id">
+              <td>{{ ts.title }}</td>
+              <td>{{ ts.amount }}</td>
+              <td>{{ ts.category }}</td>
+            </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-col>
+    </v-row>
+    <v-dialog v-model="errorDialog.enabled">
       <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
         <v-card-text>
-          <p>
-            Vuetify is a progressive Material Design component framework for
-            Vue.js. It was designed to empower developers to create amazing
-            applications.
-          </p>
-          <p>
-            For more information on Vuetify, check out the
-            <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official
-            <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord </a
-            >.
-          </p>
-          <p>
-            Find a bug? Report it on the github
-            <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board </a
-            >.
-          </p>
-          <p>
-            Thank you for developing with Vuetify and I look forward to bringing
-            more exciting features in the future.
-          </p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3" />
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br />
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
+          <span class="text-h4">{{ errorDialog.title }}</span>: <span>{{ errorDialog.detail }}</span>
         </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" nuxt to="/inspire"> Continue </v-btn>
-        </v-card-actions>
       </v-card>
-    </v-col>
-  </v-row>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script>
 export default {
-  name: 'IndexPage',
+  data: () => ({
+    errorDialog: {
+      enabled: false,
+      title: '',
+      detail: '',
+    },
+    transactions: [
+      {
+        id: 1,
+        title: '',
+        category: '',
+        amount: 0
+      }
+    ],
+  }),
+  async fetch() {
+    if (this.$auth.loggedIn) {
+      this.transactions = await this.getTransactions();
+    }
+  },
+  methods: {
+    async loginWithGoogle() {
+      try {
+        await this.$auth.loginWith('google', {
+          params: {
+            prompt: 'select_account',
+          }
+        })
+      } catch(e) {
+        this.dialog.enabled = true
+        this.dialog.title = 'Error ' + e.statusCode
+        this.dialog.detail = e.message
+      }
+    },
+    getTransactions(limit = 5) {
+      return this.$axios.$get('/transactions', {
+        params: {
+          limit,
+          order_created_at: 'desc'
+          // recent: 1
+        }
+      })
+    }
+  }
 }
 </script>

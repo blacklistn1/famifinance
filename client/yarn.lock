@@ -3734,6 +3734,9 @@ __metadata:
     eslint-config-prettier: ^8.5.0
     eslint-plugin-nuxt: ^4.0.0
     eslint-plugin-vue: ^9.5.1
+    highcharts: ^10.3.3
+    highcharts-vue: ^1.4.0
+    moment: ^2.29.4
     nuxt: ^2.15.8
     postcss-html: ^1.5.0
     prettier: ^2.7.1
@@ -3746,6 +3749,7 @@ __metadata:
     vue-template-compiler: ^2.7.10
     vuelidate: ^0.7.7
     vuetify: ^2.6.14
+    vuex: ^3.6.2
   languageName: unknown
   linkType: soft
 
@@ -6424,6 +6428,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"highcharts-vue@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "highcharts-vue@npm:1.4.0"
+  peerDependencies:
+    highcharts: ">=5.0.0"
+    vue: ">=1.0.0"
+  checksum: 938ccb244e42697089d75bc7e60e57345403066501c1546c65a40a1438fe6e575e54588b1fe30d0b2ccdfc234f70a420b604d738cd7184c4fa1f01f05ab2e242
+  languageName: node
+  linkType: hard
+
+"highcharts@npm:^10.3.3":
+  version: 10.3.3
+  resolution: "highcharts@npm:10.3.3"
+  checksum: f40690109486fdada407cdc94f257dd869ebbcdd0c7ac4c7b85021c087523b4c32ea88725dce5f1b490c9669573240e17622c4765366ed4c38ff2b2503f092e9
+  languageName: node
+  linkType: hard
+
 "hmac-drbg@npm:^1.0.1":
   version: 1.0.1
   resolution: "hmac-drbg@npm:1.0.1"
@@ -8242,6 +8263,13 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: a96865108c6c3b1b8e1d5e9f11843de1e077e57737602de1b82030815f311be11f96f09cce59bd5b903d0b29834733e5313f9301e3ed6d6f6fba2eae0df4298f
+  languageName: node
+  linkType: hard
+
+"moment@npm:^2.29.4":
+  version: 2.29.4
+  resolution: "moment@npm:2.29.4"
+  checksum: 0ec3f9c2bcba38dc2451b1daed5daded747f17610b92427bebe1d08d48d8b7bdd8d9197500b072d14e326dd0ccf3e326b9e3d07c5895d3d49e39b6803b76e80e
   languageName: node
   linkType: hard
 

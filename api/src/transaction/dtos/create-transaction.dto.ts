@@ -15,4 +15,7 @@ export class CreateTransactionDto {
 
   @IsNumber()
   amount: number;
+
+  @IsString()
+  direction: 'in' | 'out';
 }

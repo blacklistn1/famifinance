@@ -19,6 +19,7 @@ export class AuthService {
     this.gc.setCredentials(tokens);
     const user = await this.googleOAuthService.getUserProfile();
     const existingUser = await this.userService.findOneByEmail(user.email);
+    let savedUser;
     const payload = {
       email: user.email,
       emailVerified: user.verified_email,
@@ -29,10 +30,12 @@ export class AuthService {
       picture: user.picture,
     };
     if (!existingUser) {
-      await this.userService.create(payload);
+      savedUser = await this.userService.create(payload);
     } else {
-      await this.userService.updateUserProfile(payload);
+      savedUser = existingUser;
     }
+    await this.userService.updateUserProfile(user.email, payload);
+    await this.userService.saveUserToken(savedUser, tokens);
     return tokens;
   }
 
@@ -41,8 +44,12 @@ export class AuthService {
     return this.googleOAuthService.getUserProfile({});
   }
 
-  logout(tokens: Tokens) {
-    this.gc.setCredentials(tokens);
+  async logout(token) {
+    const tokenInfo = await this.gc.getTokenInfo(token);
+    const user = await this.userService.findOneByEmail(tokenInfo.email);
+    if (user) {
+      await this.userService.revokeToken(user.id);
+    }
     return this.gc.revokeCredentials();
   }
 }

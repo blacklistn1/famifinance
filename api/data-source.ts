@@ -26,6 +26,7 @@ const testDataSourceOptions = {
   entities: ['./**/*.entity.ts'],
 };
 
+/* CAUTION: typeorm 0.3.12 doesn't work with glob patterns */
 const typeDS = JSON.parse(JSON.stringify(dataSourceOptions));
 Object.assign(typeDS, {
   entities: ['./**/*.entity.{js,ts}'],

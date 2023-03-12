@@ -15,6 +15,8 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
+  /* Foreign keys */
+
   @Column({
     nullable: true,
   })
@@ -24,6 +26,8 @@ export class Transaction {
     nullable: true,
   })
   categoryId: number;
+
+  /* Transaction info */
 
   @Column()
   title: string;
@@ -36,6 +40,8 @@ export class Transaction {
   @Column()
   amount: number;
 
+  /* Dates */
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -44,6 +50,8 @@ export class Transaction {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  /* Relations */
 
   @ManyToOne(() => User, {
     onUpdate: 'CASCADE',

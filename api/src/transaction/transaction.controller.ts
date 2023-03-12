@@ -6,11 +6,12 @@ import {
   Patch,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
-import { Serialize } from '../common/interceptors/serialize.interceptor';
-import { CurrentUserDto } from './dtos/current-user.dto';
+import { GoogleOAuthGuard } from '../auth/guards';
 
 @Controller('transactions')
 export class TransactionController {
@@ -20,8 +21,10 @@ export class TransactionController {
   createTransaction(@Body() body: CreateTransactionDto) {}
 
   @Get('/')
-  @Serialize(CurrentUserDto)
-  async getTransactions(@Query() query: any) {}
+  @UseGuards(GoogleOAuthGuard)
+  getTransactions(@Req() req: any, @Query() query: any) {
+    return this.transactionsService.getTransactions(req.user.id, query);
+  }
 
   @Patch('/:id')
   async updateTransaction(@Param('id') id: number) {}

@@ -14,6 +14,7 @@ import { AppController } from './app.controller';
     UserModule,
     ConfigModule.forRoot({
       load: [mainConfig],
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

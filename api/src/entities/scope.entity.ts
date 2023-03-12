@@ -6,15 +6,14 @@ export class Scope {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    nullable: true,
-  })
-  profileId: number;
+  /* Foreign keys */
 
   @Column({
     nullable: true,
   })
   tokenId: number;
+
+  /* Scope info */
 
   @Column()
   name: string;

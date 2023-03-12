@@ -31,7 +31,9 @@ export class AuthController {
 
   @Get('logout')
   @Redirect('', 302)
-  logout(@Query() query: any) {
+  async logout(@Query() query: any, @Req() req: any) {
+    const token = req.get('authorization').split(' ')[1];
+    await this.authService.logout(token);
     return {
       url: query.logout_uri,
     };

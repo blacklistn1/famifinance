@@ -14,10 +14,14 @@ export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 
+  /* Foreign keys */
+
   @Column({
     nullable: true,
   })
   userId: number;
+
+  /* Token info */
 
   @Column()
   token: string;
@@ -25,8 +29,7 @@ export class Token {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
-  expiryDate: number;
+  /* Relations */
 
   @ManyToOne(() => User, (user) => user.tokens, {
     onUpdate: 'CASCADE',

@@ -1,8 +1,10 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
-import { Profile, Role, User } from '../entities';
+import { Category, Profile, Role, Token, User } from '../entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '../common/dtos';
+import { UpdateProfileDto } from './dtos/update-profile.dto';
+import { Tokens } from '../common/types';
 
 @Injectable()
 export class UserService implements OnApplicationBootstrap {
@@ -10,6 +12,8 @@ export class UserService implements OnApplicationBootstrap {
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Profile) private profileRepo: Repository<Profile>,
     @InjectRepository(Role) private roleRepo: Repository<Role>,
+    @InjectRepository(Category) private cateRepo: Repository<Category>,
+    @InjectRepository(Token) private tokenRepo: Repository<Token>,
   ) {}
 
   async onApplicationBootstrap() {
@@ -27,7 +31,7 @@ export class UserService implements OnApplicationBootstrap {
       console.log('Already have an existing admin role. Next function...');
     }
 
-    /* Create an admin (email: ndwuong2@gmail.com) */
+    /* Create an admin */
     console.log('Looking for existing admin...');
     const existingAdmin = await this.userRepo.findOne({
       where: {
@@ -38,7 +42,7 @@ export class UserService implements OnApplicationBootstrap {
         profile: true,
       },
     });
-    if (!Object.keys(existingAdmin).length) {
+    if (!existingAdmin) {
       const admin = await this.userRepo.save(
         this.userRepo.create({
           email: 'ndwuong2@gmail.com',
@@ -88,8 +92,8 @@ export class UserService implements OnApplicationBootstrap {
     return user;
   }
 
-  async updateUserProfile(payload: any) {
-    const { email, firstName, lastName, locale, name, picture } = payload;
+  async updateUserProfile(email: string, payload: UpdateProfileDto) {
+    const { firstName, lastName, locale, name, picture } = payload;
     const user = await this.findOneByEmail(email);
     const { profile } = user;
     profile.firstName = firstName;
@@ -108,6 +112,19 @@ export class UserService implements OnApplicationBootstrap {
         profile: true,
       },
     });
+  }
+
+  saveUserToken(user: User, token: Tokens) {
+    return this.tokenRepo.save(
+      this.tokenRepo.create({
+        userId: user.id,
+        token: token.refresh_token,
+      }),
+    );
+  }
+
+  revokeToken(userId: number) {
+    return this.tokenRepo.delete({ userId });
   }
 
   findOneByEmail(email: string): Promise<User> {

@@ -15,10 +15,14 @@ export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
+  /* Foreign keys */
+
   @Column({
     nullable: true,
   })
   userId: number;
+
+  /* Profile info */
 
   @Column()
   firstName: string;
@@ -45,6 +49,8 @@ export class Profile {
   @Column()
   balance: number;
 
+  /* Dates */
+
   @CreateDateColumn()
   createdAt: Date;
 
@@ -53,6 +59,8 @@ export class Profile {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  /* Relations */
 
   @OneToOne(() => User, (user) => user.profile, {
     onUpdate: 'CASCADE',

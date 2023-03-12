@@ -21,16 +21,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  email: string;
-
-  @Column({
-    nullable: true,
-  })
-  password?: string;
-
-  @Column()
-  emailVerified: boolean;
+  /* Foreign keys */
 
   @Column({
     nullable: true,
@@ -42,11 +33,28 @@ export class User {
   })
   roleId: number;
 
+  /* User Info */
+
+  @Column()
+  email: string;
+
+  @Column({
+    nullable: true,
+  })
+  password?: string;
+
+  @Column()
+  emailVerified: boolean;
+
+  /* Dates */
+
   @CreateDateColumn()
   createdAt: Date;
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  /* Relations */
 
   @OneToMany(() => Token, (token) => token.user, {
     onUpdate: 'CASCADE',

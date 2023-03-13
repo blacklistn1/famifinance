@@ -76,6 +76,7 @@ export class UserService implements OnApplicationBootstrap {
       email: payload.email,
       emailVerified: payload.emailVerified,
       password: payload.password || null,
+      roleId: payload.roleId,
     });
     const user = await this.userRepo.save(newUser);
     const profile = this.profileRepo.create({

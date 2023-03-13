@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
 import { ProfileService } from '../services/profile.service';
-import { GoogleOAuthGuard } from '../../auth/guards';
+import { GoogleOAuthGuard } from '../../auth';
 import { RequestWithUser } from '../../common/types';
 import { AddBalanceDto } from '../dtos/add-balance.dto';
 

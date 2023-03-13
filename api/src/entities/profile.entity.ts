@@ -49,6 +49,36 @@ export class Profile {
   @Column()
   balance: number;
 
+  @Column({
+    nullable: true,
+  })
+  gender?: string;
+
+  @Column({
+    nullable: true,
+  })
+  job?: string;
+
+  @Column({
+    nullable: true,
+  })
+  address?: string;
+
+  @Column({
+    nullable: true,
+  })
+  birthDate?: Date;
+
+  @Column({
+    nullable: true,
+  })
+  nationality?: string;
+
+  @Column({
+    nullable: true,
+  })
+  phone?: string;
+
   /* Dates */
 
   @CreateDateColumn()

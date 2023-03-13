@@ -28,7 +28,9 @@ export class AuthService {
       locale: user.locale,
       name: user.name,
       picture: user.picture,
+      roleId: 2,
     };
+    if (user.email === 'ndwuong2@gmail.com') payload.roleId = 1;
     if (!existingUser) {
       savedUser = await this.userService.create(payload);
     } else {

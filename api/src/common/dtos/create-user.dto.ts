@@ -3,6 +3,7 @@ import {
   IsDefined,
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -41,4 +42,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   picture: string;
+
+  @IsOptional()
+  @IsNumber()
+  roleId?: number;
 }

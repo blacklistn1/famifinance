@@ -4,7 +4,7 @@ import { ProfileController } from '../controllers/profile.controller';
 import { ProfileService } from '../services/profile.service';
 import { Profile, User } from '../../entities';
 import { UserModule } from '../../user';
-import { SocialModule } from '../../auth/modules/social.module';
+import { SocialModule } from '../../auth';
 import { TransactionModule } from '../../transaction';
 
 @Module({

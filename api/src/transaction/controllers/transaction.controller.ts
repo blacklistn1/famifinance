@@ -9,9 +9,9 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { TransactionService } from './transaction.service';
-import { CreateTransactionDto } from './dtos/create-transaction.dto';
-import { GoogleOAuthGuard } from '../auth/guards';
+import { TransactionService } from '../services/transaction.service';
+import { CreateTransactionDto } from '../dtos/create-transaction.dto';
+import { GoogleOAuthGuard } from '../../auth/guards';
 
 @Controller('transactions')
 export class TransactionController {

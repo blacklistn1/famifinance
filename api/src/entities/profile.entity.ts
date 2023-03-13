@@ -68,4 +68,8 @@ export class Profile {
   })
   @JoinColumn()
   user: User;
+
+  get fullName() {
+    return [this.firstName, this.lastName].join(' ');
+  }
 }

@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { TransactionService } from '../transaction.service';
+import { TransactionService } from '../services/transaction.service';
 
 @Injectable()
 export class IsOwnerGuard implements CanActivate {

@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  HttpException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -23,17 +24,23 @@ export class GoogleOAuthGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext) {
-    const headers = await this.gc.getRequestHeaders();
+    let headers;
+    let payload;
+    try {
+      headers = await this.gc.getRequestHeaders();
+    } catch (e) {
+      throw new UnauthorizedException('Not authorized', {
+        cause: new Error(e),
+      });
+    }
     const request = context.switchToHttp().getRequest();
-    if (!headers['Authorization']) {
-      throw new UnauthorizedException('Not authorized');
-    }
     const token = headers['Authorization'].split(' ')[1];
-    const payload = await this.gc.getTokenInfo(token);
-    const user = await this.userService.findOneByEmail(payload.email);
-    if (!user) {
-      throw new ForbiddenException('Not allowed to view this content');
+    try {
+      payload = await this.gc.getTokenInfo(token);
+    } catch (e) {
+      throw new ForbiddenException();
     }
+    const user = await this.userService.findOneByEmail(payload.email);
     request.user = user;
     return !!user;
   }

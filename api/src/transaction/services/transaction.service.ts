@@ -1,10 +1,15 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, FindManyOptions } from 'typeorm';
-import { Transaction } from '../entities';
-import { CreateTransactionDto } from './dtos/create-transaction.dto';
-import { Category, User } from '../entities';
-import { UpdateTransactionDto } from '../common/dtos';
+import {
+  Repository,
+  UpdateResult,
+  FindManyOptions,
+  InsertResult,
+} from 'typeorm';
+import { Transaction } from '../../entities';
+import { CreateTransactionDto } from '../dtos/create-transaction.dto';
+import { Category, User } from '../../entities';
+import { UpdateTransactionDto } from '../../common/dtos';
 
 @Injectable()
 export class TransactionService implements OnApplicationBootstrap {
@@ -39,12 +44,14 @@ export class TransactionService implements OnApplicationBootstrap {
     }
   }
 
-  createOne(transaction: CreateTransactionDto, userId: number) {
-    const newTransaction = this.repo.create(transaction);
-
-    newTransaction.userId = userId;
-
-    return this.repo.save(newTransaction);
+  addTransaction(
+    transaction: CreateTransactionDto,
+    userId: number,
+  ): Promise<InsertResult> {
+    return this.repo.insert({
+      ...transaction,
+      userId,
+    });
   }
 
   getTransactions(userId: number, options: any = {}): Promise<Transaction[]> {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { OAuth2Client, Credentials } from 'google-auth-library';
 import { UserService } from '../../user';
 import { GoogleOAuthService } from './google.service';
@@ -44,7 +44,14 @@ export class AuthService {
     return this.googleOAuthService.getUserProfile({});
   }
 
-  async logout(token) {
+  async logout() {
+    let headers;
+    try {
+      headers = await this.gc.getRequestHeaders();
+    } catch (e) {
+      throw new UnauthorizedException();
+    }
+    const token = headers['Authorization'].split(' ')[1];
     const tokenInfo = await this.gc.getTokenInfo(token);
     const user = await this.userService.findOneByEmail(tokenInfo.email);
     if (user) {

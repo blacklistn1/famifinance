@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user';
 import { TransactionModule } from './transaction';
-import { ProfileModule } from './profile/profile.module';
+import { ProfileModule } from './profile';
 import { AuthModule } from './auth';
 import mainConfig from './common/config';
 import { DataSourceOptions } from 'typeorm';

@@ -1,3 +1,3 @@
-export * from './transaction.controller';
-export * from './transaction.module';
-export * from './transaction.service';
+export * from './controllers/transaction.controller';
+export * from './modules/transaction.module';
+export * from './services/transaction.service';

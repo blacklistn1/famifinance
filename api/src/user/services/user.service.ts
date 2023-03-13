@@ -1,10 +1,10 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
-import { Category, Profile, Role, Token, User } from '../entities';
+import { Profile, Role, Token, User } from '../../entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from '../common/dtos';
-import { UpdateProfileDto } from './dtos/update-profile.dto';
-import { Tokens } from '../common/types';
+import { CreateUserDto } from '../../common/dtos';
+import { UpdateProfileDto } from '../dtos/update-profile.dto';
+import { Tokens } from '../../common/types';
 
 @Injectable()
 export class UserService implements OnApplicationBootstrap {
@@ -12,7 +12,6 @@ export class UserService implements OnApplicationBootstrap {
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Profile) private profileRepo: Repository<Profile>,
     @InjectRepository(Role) private roleRepo: Repository<Role>,
-    @InjectRepository(Category) private cateRepo: Repository<Category>,
     @InjectRepository(Token) private tokenRepo: Repository<Token>,
   ) {}
 

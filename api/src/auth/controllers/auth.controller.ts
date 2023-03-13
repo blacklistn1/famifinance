@@ -31,18 +31,10 @@ export class AuthController {
 
   @Get('logout')
   @Redirect('', 302)
-  async logout(@Query() query: any, @Req() req: any) {
-    const token = req.get('authorization').split(' ')[1];
-    await this.authService.logout(token);
+  async logout(@Query() query: any) {
+    await this.authService.logout();
     return {
       url: query.logout_uri,
     };
-  }
-
-  /**
-   * Test protected route
-   */
-  protected() {
-    return 1;
   }
 }

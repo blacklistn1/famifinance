@@ -22,7 +22,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page
-  plugins: [{ src: '~/plugins/highcharts.js', mode: 'client' }],
+  plugins: [{ src: '~/plugins/highcharts.js', mode: 'client' }, { src: '~/plugins/vuelidate.js', mode: 'client'}],
 
   // Auto import components
   components: true,

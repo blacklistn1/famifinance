@@ -60,11 +60,11 @@
           </v-list-item>
         </v-list>
       </v-menu>
+      <v-btn v-if="$auth.loggedIn" class="ml-3" @click="logout">
+        Logout
+      </v-btn>
       <v-btn v-if="!$auth.loggedIn" color="red darken-1" class="white--text" @click="login">
         Login with Google+
-      </v-btn>
-      <v-btn v-else @click="logout">
-        Logout
       </v-btn>
     </v-app-bar>
     <v-main class="grey lighten-4">
@@ -92,8 +92,18 @@ export default {
         {
           icon: 'mdi-poll',
           title: 'Profile',
+          to: '/profile',
+        },
+        {
+          icon: 'mdi-finance',
+          title: 'Transactions',
           to: '/transactions',
         },
+        {
+          icon: 'mdi-wallet',
+          title: 'Plans and budgets',
+          to: '/budget'
+        }
       ],
       authLinks: [
         {
@@ -103,7 +113,7 @@ export default {
       ],
       miniVariant: false,
       right: true,
-      title: 'Vuetify.js',
+      title: 'Famifinance',
     }
   },
   methods: {

@@ -1,18 +1,56 @@
 <template>
-  <v-row class="white">
-    <v-col>
-      <v-card>
+  <v-row justify="center" no-gutters>
+    <v-col cols="8" class="white">
+      <v-card class="pa-6">
         <v-card-title>
           <h1>Profile</h1>
         </v-card-title>
         <v-card-text>
-          <div>
-            <h4 class="text-h4">Balance:</h4>
-            <h5 class="text-h5">{{ profile.balance }}</h5>
-          </div>
+          <v-row>
+            <v-col cols="5" class="flex justify-center">
+              <img :src="profile.picture" alt="Profile picture" class="rounded-circle ">
+            </v-col>
+            <v-col cols="7">
+              <v-row no-gutters align="center">
+                <v-col>
+                  <h3 class="text-h3">Balance: </h3>
+                  <h2 class="text-h2 font-weight-bold">{{ profile.balance }}</h2>
+                </v-col>
+                <v-col>
+                  <v-btn
+                    class="primary white--text pa-8"
+                    @click="addBalanceDialog = true"
+                  >
+                    <span class="text-h5">Add balance</span>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="5">
+              <h5 class="text-h5">Name</h5>
+              <h6 class="text-h6">{{ profile.name }}</h6>
+              <h5 class="text-h5">Gender</h5>
+              <h6 class="text-h6">{{ profile.gender }}</h6>
+            </v-col>
+            <v-col cols="7">
+              <h5 class="text-h5">Email:</h5>
+              <v-text-field v-model="$auth.user.email" disabled></v-text-field>
+              <h5 class="text-h5">Address:</h5>
+              <v-text-field v-model="profile.address"></v-text-field>
+              <h5 class="text-h5">Birth date:</h5>
+              <v-text-field v-model="profile.birthDate"></v-text-field>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="addBalanceDialog = true">Add balance</v-btn>
+          <v-row>
+            <v-col cols="5"></v-col>
+            <v-col cols="7">
+              <v-btn class="success">Update profile</v-btn>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-col>
@@ -39,9 +77,12 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn class="primary white--text" @click="addBalance"
-            >Add balance</v-btn
+          <v-btn
+            class="primary white--text"
+            @click="addBalance"
           >
+            Add balance
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -100,11 +141,13 @@ export default {
   methods: {
     async addBalance() {
       const res = await this.$axios.post('/profile/add-balance', {
-        balance: this.amount,
+        amount: parseFloat(this.amount),
         description: this.description.trim().length ? this.description : null
       })
       if (res.status === 201) {
-        return this.$router.push('/profile')
+        this.addBalanceDialog = false
+        this.profile = {}
+        this.profile = await this.$axios.$get('/profile')
       }
     },
   },

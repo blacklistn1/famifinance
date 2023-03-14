@@ -8,7 +8,10 @@
         <v-card-text>
           <v-row>
             <v-col cols="5" class="flex justify-center">
-              <img :src="profile.picture" alt="Profile picture" class="rounded-circle ">
+              <v-avatar color="primary" size="150">
+                <v-img v-if="profile.picture" :src="profile.picture"></v-img>
+                <v-icon v-if="!profile.picture" dark size="90">mdi-account-circle</v-icon>
+              </v-avatar>
             </v-col>
             <v-col cols="7">
               <v-row no-gutters align="center">
@@ -29,18 +32,48 @@
           </v-row>
           <v-row>
             <v-col cols="5">
-              <h5 class="text-h5">Name</h5>
-              <h6 class="text-h6">{{ profile.name }}</h6>
-              <h5 class="text-h5">Gender</h5>
-              <h6 class="text-h6">{{ profile.gender }}</h6>
+              <v-row justify="space-between" no-gutters>
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Name:</span>
+                </v-col>
+                <v-col>
+                  <h6 class="text-h6">{{ profile.name }}</h6>
+                </v-col>
+              </v-row>
+              <v-row justify="space-between" no-gutters>
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Gender: </span>
+                </v-col>
+                <v-col>
+                  <span class="text-lg-body-1">{{ profile.gender }}</span>
+                </v-col>
+              </v-row>
             </v-col>
             <v-col cols="7">
-              <h5 class="text-h5">Email:</h5>
-              <v-text-field v-model="$auth.user.email" disabled></v-text-field>
-              <h5 class="text-h5">Address:</h5>
-              <v-text-field v-model="profile.address"></v-text-field>
-              <h5 class="text-h5">Birth date:</h5>
-              <v-text-field v-model="profile.birthDate"></v-text-field>
+              <v-row no-gutters justify="space-between">
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Email:</span>
+                </v-col>
+                <v-col>
+                  <v-text-field v-model="$auth.user.email" disabled></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters justify="space-between">
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Address:</span>
+                </v-col>
+                <v-col>
+                  <v-text-field v-model="profile.address"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters justify="space-between">
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Birth date:</span>
+                </v-col>
+                <v-col>
+                  <v-text-field v-model="profile.birthDate"></v-text-field>
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-card-text>
@@ -48,7 +81,7 @@
           <v-row>
             <v-col cols="5"></v-col>
             <v-col cols="7">
-              <v-btn class="success">Update profile</v-btn>
+              <v-btn class="success" :disabled="updateProfileDisabled">Update profile</v-btn>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -108,6 +141,8 @@ export default {
   },
   data: () => ({
     profile: {},
+    origProfile: {},
+    updateProfileDisabled: true,
     amount: 0,
     description: '',
     addBalanceDialog: false,
@@ -117,6 +152,11 @@ export default {
   }),
   async fetch() {
     this.profile = await this.$axios.$get('/profile')
+    for (const key in this.profile) {
+      if (this.profile[key] === null)
+        this.profile[key] = ''
+    }
+    this.origProfile = JSON.parse(JSON.stringify(this.profile))
   },
   computed: {
     amountErrors() {
@@ -135,8 +175,21 @@ export default {
       return errors
     },
   },
-  mounted() {
-    console.log(this.$v.$flattenParams(this.$v.amount.$params))
+  watch: {
+    profile: {
+      handler: function (val) {
+        for (const key of Object.keys(val)) {
+          if (key === 'user') continue
+          if (val[key] !== this.origProfile[key]) {
+            this.updateProfileDisabled = false
+            break
+          } else {
+            this.updateProfileDisabled = true
+          }
+        }
+      },
+      deep: true,
+    }
   },
   methods: {
     async addBalance() {

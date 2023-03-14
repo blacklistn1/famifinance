@@ -86,13 +86,8 @@ export default {
       items: [
         {
           icon: 'mdi-apps',
-          title: 'Welcome',
+          title: 'Homepage',
           to: '/',
-        },
-        {
-          icon: 'mdi-poll',
-          title: 'Profile',
-          to: '/profile',
         },
         {
           icon: 'mdi-finance',

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../services/auth.service';
-import { Tokens } from '../../common/types';
+import { LogoutQuery } from '../../common/types';
 
 @Controller('auth')
 export class AuthController {
@@ -26,12 +26,14 @@ export class AuthController {
     return this.authService.getUser({ access_token: token });
   }
 
-  @Get('/refresh')
-  refreshToken(tokens: Tokens) {}
+  @Get('refresh')
+  refreshToken() {
+    this.authService.refreshToken();
+  }
 
   @Get('logout')
   @Redirect('', 302)
-  async logout(@Query() query: any) {
+  async logout(@Query() query: LogoutQuery) {
     await this.authService.logout();
     return {
       url: query.logout_uri,

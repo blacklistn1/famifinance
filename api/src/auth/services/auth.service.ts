@@ -46,6 +46,13 @@ export class AuthService {
     return this.googleOAuthService.getUserProfile({});
   }
 
+  refreshToken() {
+    this.gc.on('tokens', (tokens) => {
+      const { access_token } = tokens;
+      return { access_token };
+    });
+  }
+
   async logout() {
     let headers;
     try {

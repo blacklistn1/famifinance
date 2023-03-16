@@ -22,7 +22,7 @@
                 Balance
               </v-card-title>
               <v-card-text>
-                <span class="text-h3 font-weight-bold">10.000.000</span>
+                <span class="text-h3 font-weight-bold">{{ profile.balance }}</span>
               </v-card-text>
             </v-card>
           </v-col>
@@ -65,7 +65,7 @@
             <tr v-for="ts in transactions" :key="ts.id">
               <td>{{ ts.title }}</td>
               <td>{{ ts.amount }}</td>
-              <td>{{ ts.category }}</td>
+              <td>{{ ts.category.title }}</td>
             </tr>
             </tbody>
           </template>
@@ -90,18 +90,13 @@ export default {
       title: '',
       detail: '',
     },
-    transactions: [
-      {
-        id: 1,
-        title: '',
-        category: '',
-        amount: 0
-      }
-    ],
+    transactions: [],
+    profile: {},
   }),
   async fetch() {
     if (this.$auth.loggedIn) {
-      this.transactions = await this.getTransactions();
+      this.transactions = await this.getTransactions()
+      this.profile = await this.getProfile()
     }
   },
   methods: {
@@ -126,6 +121,9 @@ export default {
           // recent: 1
         }
       })
+    },
+    getProfile() {
+      return this.$axios.$get('/profile')
     }
   }
 }

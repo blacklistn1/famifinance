@@ -31,24 +31,17 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="5">
+            <v-col cols="4">
               <v-row justify="space-between" no-gutters>
-                <v-col cols="3" align-self="center">
-                  <span class="font-weight-bold">Name:</span>
-                </v-col>
-                <v-col>
-                  <h6 class="text-h6">{{ profile.name }}</h6>
-                </v-col>
+                <span class="font-weight-bold">Name:</span>
+                <span class="font-weight-bold text-lg-body-1">{{ profile.name }}</span>
               </v-row>
-              <v-row justify="space-between" no-gutters>
-                <v-col cols="3" align-self="center">
-                  <span class="font-weight-bold">Gender: </span>
-                </v-col>
-                <v-col>
-                  <span class="text-lg-body-1">{{ profile.gender }}</span>
-                </v-col>
+              <v-row justify="space-between" no-gutters align-content="center">
+                <span class="font-weight-bold">Gender: </span>
+                <span class="text-lg-body-1">{{ profile.gender }}</span>
               </v-row>
             </v-col>
+            <v-spacer></v-spacer>
             <v-col cols="7">
               <v-row no-gutters justify="space-between">
                 <v-col cols="3" align-self="center">
@@ -66,12 +59,71 @@
                   <v-text-field v-model="profile.address"></v-text-field>
                 </v-col>
               </v-row>
+              <v-row no-gutters>
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Nationality:</span>
+                </v-col>
+                <v-col>
+                  <v-text-field v-model="profile.nationality"></v-text-field>
+                </v-col>
+              </v-row>
               <v-row no-gutters justify="space-between">
                 <v-col cols="3" align-self="center">
                   <span class="font-weight-bold">Birth date:</span>
                 </v-col>
                 <v-col>
-                  <v-text-field v-model="profile.birthDate"></v-text-field>
+                  <v-row no-gutters>
+                    <v-col
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-menu
+                        v-model="birthDateMenu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template #activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="profile.birthDate"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="profile.birthDate"
+                          @input="birthDateMenu = false"
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Job:</span>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="profile.job"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="3" align-self="center">
+                  <span class="font-weight-bold">Gender:</span>
+                </v-col>
+                <v-col>
+                  <v-select
+                    v-model="profile.gender"
+                    :items="genderOptions"
+                    persistent-hint
+                  ></v-select>
                 </v-col>
               </v-row>
             </v-col>
@@ -81,7 +133,7 @@
           <v-row>
             <v-col cols="5"></v-col>
             <v-col cols="7">
-              <v-btn class="success" :disabled="updateProfileDisabled">Update profile</v-btn>
+              <v-btn class="success" :disabled="updateProfileDisabled" @click="updateProfile">Update profile</v-btn>
             </v-col>
           </v-row>
         </v-card-actions>
@@ -104,7 +156,7 @@
               @input="$v.amount.$touch()"
             ></v-text-field>
             <v-text-field
-              v-model="description"
+              v-model="title"
               label="Description"
             ></v-text-field>
           </v-form>
@@ -127,6 +179,7 @@
 // import { Chart } from 'highcharts-vue'
 import { validationMixin } from 'vuelidate'
 import { required, minValue } from 'vuelidate/lib/validators'
+import moment from 'moment'
 import { multitude } from '~/common/vuelidate/validators.js'
 
 export default {
@@ -140,21 +193,31 @@ export default {
     },
   },
   data: () => ({
-    profile: {},
+    profile: {
+      gender: '',
+      address: '',
+      nationality: '',
+      job: '',
+      birthDate: '',
+    },
     origProfile: {},
     updateProfileDisabled: true,
     amount: 0,
-    description: '',
+    title: '',
     addBalanceDialog: false,
+    birthDateMenu: false,
     chartOptions: {
       series: [{ data: [1, 2, 3, 4] }],
     },
+    genderOptions: ['Male', 'Female', 'Other'],
   }),
   async fetch() {
     this.profile = await this.$axios.$get('/profile')
     for (const key in this.profile) {
       if (this.profile[key] === null)
         this.profile[key] = ''
+      const d = new Date(Date.parse(this.profile.birthDate))
+      this.profile.birthDate = moment(d).format('YYYY-MM-DD')
     }
     this.origProfile = JSON.parse(JSON.stringify(this.profile))
   },
@@ -195,7 +258,7 @@ export default {
     async addBalance() {
       const res = await this.$axios.post('/profile/add-balance', {
         amount: parseFloat(this.amount),
-        description: this.description.trim().length ? this.description : null
+        description: this.title.trim().length ? this.title : null
       })
       if (res.status === 201) {
         this.addBalanceDialog = false
@@ -203,6 +266,25 @@ export default {
         this.profile = await this.$axios.$get('/profile')
       }
     },
+    async updateProfile() {
+      try {
+        const res = await this.$axios.patch('/profile', {
+          firstName: this.$auth.user.given_name,
+          gender: this.profile.gender || null,
+          address: this.profile.address || null,
+          nationality: this.profile.nationality || null,
+          birthDate: moment(this.profile.birthDate).toISOString() || null,
+          job: this.profile.job || null,
+        })
+        if ([200, 201].includes(res.status)) {
+          this.profile = {}
+          this.profile = await this.$axios.$get('/profile')
+          this.origProfile = JSON.parse(JSON.stringify(this.profile))
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
   },
 }
 </script>

@@ -6,6 +6,7 @@ import { User } from '../../entities';
 import { GoogleOAuthGuard } from '../../auth/guards';
 import { TransactionService } from '../../transaction';
 import { AddBalanceDto } from '../dtos/add-balance.dto';
+import { ProfileDto } from '../dtos/profile.dto';
 
 @Injectable()
 @UseGuards(GoogleOAuthGuard)
@@ -40,8 +41,7 @@ export class ProfileService {
     const updatedProfile = await this.profileRepo.save(profile);
     // Add to transactions in the "Add balance" category
     const newTransaction = {
-      title: 'Add balance',
-      description: payload.description || 'Add balance',
+      title: payload.title || 'Add balance',
       categoryId: 1,
       amount: payload.amount,
     };
@@ -49,5 +49,9 @@ export class ProfileService {
       newTransaction,
       updatedProfile.userId,
     );
+  }
+
+  updateProfile(userId: number, payload: ProfileDto) {
+    return this.profileRepo.update({ userId }, payload);
   }
 }

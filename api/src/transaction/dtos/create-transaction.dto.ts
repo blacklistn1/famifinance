@@ -5,9 +5,9 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   title: string;
 
-  @IsString()
   @IsOptional()
-  description: string;
+  @IsString()
+  description?: string;
 
   @IsNumber()
   @IsNotEmpty()

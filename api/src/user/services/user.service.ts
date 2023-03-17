@@ -114,6 +114,14 @@ export class UserService implements OnApplicationBootstrap {
     });
   }
 
+  selectByQuery(query: any) {
+    return this.userRepo
+      .createQueryBuilder('u')
+      .select('u.email', 'user_email')
+      .addSelect('p.firstName')
+      .execute();
+  }
+
   saveUserToken(user: User, token: Tokens) {
     return this.tokenRepo.save(
       this.tokenRepo.create({

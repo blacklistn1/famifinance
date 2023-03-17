@@ -1,4 +1,5 @@
 export * from './category.entity';
+export * from './job.entity';
 export * from './profile.entity';
 export * from './role.entity';
 export * from './scope.entity';

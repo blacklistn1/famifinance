@@ -19,8 +19,14 @@ import { AppController } from './app.controller';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        ({
+      useFactory: (configService: ConfigService) => {
+        const options = configService.get<'mariadb' | 'mssql'>(
+          'database.type',
+        ) === 'mssql' && {
+          encrypt: false,
+          trustServerCertificate: true,
+        };
+        return {
           type: configService.get<'mariadb' | 'mssql'>('database.type'),
           host: configService.get('database.host'),
           port: configService.get('database.port'),
@@ -29,11 +35,9 @@ import { AppController } from './app.controller';
           database: configService.get('database.name'),
           synchronize: true,
           entities: configService.get('database.entities'),
-          options: {
-            encrypt: false,
-            trustServerCertificate: true,
-          },
-        } as DataSourceOptions),
+          options,
+        } as DataSourceOptions;
+      },
     }),
     TransactionModule,
     ProfileModule,

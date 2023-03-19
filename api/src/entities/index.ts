@@ -1,3 +1,5 @@
+export * from './budget.entity';
+export * from './budget-category.entity';
 export * from './category.entity';
 export * from './job.entity';
 export * from './profile.entity';

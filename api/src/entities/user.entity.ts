@@ -14,6 +14,8 @@ import { Profile } from './profile.entity';
 import { Transaction } from './transaction.entity';
 import { Role } from './role.entity';
 import { Token } from './token.entity';
+import { Budget } from './budget.entity';
+import { Job } from './job.entity';
 
 @Entity()
 @Unique(['email'])
@@ -82,4 +84,7 @@ export class User {
     name: 'roleId',
   })
   role: Role;
+
+  @OneToMany(() => Budget, (budget) => budget.user)
+  budgets: Budget[];
 }

@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Category } from './category.entity';
+import { Budget } from './budget.entity';
 
 @Entity()
 export class Transaction {
@@ -25,6 +26,11 @@ export class Transaction {
   @Column({
     nullable: true,
   })
+  budgetId?: number;
+
+  @Column({
+    nullable: true,
+  })
   categoryId: number;
 
   /* Transaction info */
@@ -33,9 +39,16 @@ export class Transaction {
   title: string;
 
   @Column({
+    type: 'text',
     nullable: true,
   })
-  description: string;
+  description?: string;
+
+  /**
+   * Thu hoặc chi
+   */
+  @Column()
+  type: string;
 
   @Column()
   amount: number;
@@ -64,4 +77,10 @@ export class Transaction {
     onDelete: 'SET NULL',
   })
   category: Category;
+
+  @ManyToOne(() => Budget, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
+  budget: Budget;
 }

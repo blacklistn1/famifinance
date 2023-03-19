@@ -1,3 +1,4 @@
+import { User } from './user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,12 +8,17 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Profile } from './profile.entity';
+import { BudgetCategory } from './budget-category.entity';
 
 @Entity()
-export class Job {
+export class Budget {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    nullable: true,
+  })
+  categoryId: number;
 
   @Column({
     nullable: true,
@@ -20,7 +26,16 @@ export class Job {
   userId: number;
 
   @Column()
-  title: string;
+  startDate: Date;
+
+  @Column()
+  endDate: Date;
+
+  @Column()
+  type: string;
+
+  @Column()
+  name: string;
 
   @Column({
     nullable: true,
@@ -28,12 +43,7 @@ export class Job {
   description?: string;
 
   @Column()
-  salary: number;
-
-  @Column({
-    nullable: true,
-  })
-  payDay?: string;
+  amount: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -44,9 +54,15 @@ export class Job {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @ManyToOne(() => Profile, {
+  @ManyToOne(() => User, {
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL',
   })
-  profile: Profile;
+  user: User;
+
+  @ManyToOne(() => BudgetCategory, {
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
+  category: BudgetCategory;
 }

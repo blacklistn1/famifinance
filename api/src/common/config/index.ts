@@ -1,4 +1,6 @@
 import {
+  Budget,
+  BudgetCategory,
   Category,
   Job,
   Profile,
@@ -26,6 +28,17 @@ export default () => ({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     name: process.env.DB_NAME,
-    entities: [User, Role, Profile, Transaction, Category, Job, Scope, Token],
+    entities: [
+      Budget,
+      BudgetCategory,
+      Category,
+      Job,
+      Profile,
+      Role,
+      Scope,
+      Token,
+      Transaction,
+      User,
+    ],
   },
 });

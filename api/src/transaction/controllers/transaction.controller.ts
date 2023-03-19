@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { TransactionService } from '../services/transaction.service';
 import { CreateTransactionDto } from '../dtos/create-transaction.dto';
-import { GoogleOAuthGuard } from '../../auth/guards';
+import { GoogleOAuthGuard } from '../../auth';
 
 @Controller('transactions')
 export class TransactionController {
@@ -28,4 +28,13 @@ export class TransactionController {
 
   @Patch('/:id')
   async updateTransaction(@Param('id') id: number) {}
+
+  @Get('/categories-all')
+  async getCategories() {
+    try {
+      return await this.transactionsService.getCategories();
+    } catch (e) {
+      return e;
+    }
+  }
 }

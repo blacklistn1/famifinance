@@ -86,18 +86,23 @@ export default {
       items: [
         {
           icon: 'mdi-apps',
-          title: 'Homepage',
+          title: 'Trang chủ',
           to: '/',
         },
         {
           icon: 'mdi-finance',
-          title: 'Transactions',
+          title: 'Lịch sử giao dịch',
           to: '/transactions',
         },
         {
+          icon: 'mdi-finance',
+          title: 'Chi tiết lịch sử',
+          to: '/transactions/detail'
+        },
+        {
           icon: 'mdi-wallet',
-          title: 'Plans and budgets',
-          to: '/budget'
+          title: 'Kế hoạch tài chính',
+          to: '/budgets'
         }
       ],
       authLinks: [

@@ -216,6 +216,8 @@ export default {
     for (const key in this.profile) {
       if (this.profile[key] === null)
         this.profile[key] = ''
+    }
+    if (this.profile.birthDate.length) {
       const d = new Date(Date.parse(this.profile.birthDate))
       this.profile.birthDate = moment(d).format('YYYY-MM-DD')
     }

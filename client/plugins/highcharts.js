@@ -1,4 +1,4 @@
 import Vue from 'vue'
-import Highcharts from 'highcharts-vue'
+import HighchartsVue from 'highcharts-vue'
 
-Vue.use(Highcharts)
+Vue.use(HighchartsVue)

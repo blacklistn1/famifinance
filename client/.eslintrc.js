@@ -13,6 +13,7 @@ module.exports = {
   // add your custom rules here
   rules: {
     'linebreak-style': [2, 'windows'],
-    quotes: [2, 'single']
+    quotes: [2, 'single'],
+    'vue/multi-word-component-names': 0,
   },
 }

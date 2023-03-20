@@ -34,13 +34,13 @@
         </template>
       </v-data-table>
     </v-col>
+    <TransactionForm
+      :enabled.sync="addEnabled"
+      method="insert"
+      @insert-transaction="saveItem"
+    ></TransactionForm>
+    <ErrorDialog :dialog.sync="errorObject.flag" :message="errorObject.message"></ErrorDialog>
 
-    <!-- Add transaction Overlay -->
-    <TransactionAdd
-      :enabled="addEnabled"
-      @close="saveItem"
-    ></TransactionAdd>
-    <ErrorDialog v-model="errorObject.flag" :message="errorObject.message"></ErrorDialog>
   </v-row>
 </template>
 
@@ -49,67 +49,75 @@ import moment from 'moment'
 import Highcharts from 'highcharts'
 
 export default {
-  data: () => ({
-    errorObject: {
-      flag: false,
-      message: '',
-    },
-    editEnable: false,
-    addEnabled: false,
-    editedItem: {},
-    dateMenu: false,
-    timeMenu: false,
-    newTransaction: {},
-    headers: [
-      {
-        text: 'Tên giao dịch',
-        value: 'name',
+  data() {
+    return {
+      errorObject: {
+        flag: false,
+        message: '',
       },
-      {
-        text: 'Phân loại',
-        value: 'categoryName',
-      },
-      {
-        text: 'Mô tả ngắn',
-        value: 'description',
-        sortable: false,
-        width: 250,
-      },
-      {
-        text: 'Số tiền',
-        value: 'amount',
-      },
-      {
-        text: 'Ngày giao dịch',
-        value: 'date',
-        sort: (a, b) => {
-          return (+moment(a, 'DD/MM/y')) - (+moment(b, 'DD/MM/y'))
+      editEnable: false,
+      addEnabled: false,
+      editedItem: {},
+      dateMenu: false,
+      timeMenu: false,
+      newTransaction: {},
+      headers: [
+        {
+          text: 'Tên giao dịch',
+          value: 'name',
+        },
+        {
+          text: 'Phân loại',
+          value: 'categoryName',
+        },
+        {
+          text: 'Mô tả ngắn',
+          value: 'description',
+          sortable: false,
+          width: 250,
+        },
+        {
+          text: 'Số tiền',
+          value: 'amount',
+        },
+        {
+          text: 'Loại giao dịch',
+          value: 'type',
+        },
+        {
+          text: 'Ngày giao dịch',
+          value: 'date',
+          sort: (a, b) => {
+            return (+moment(a, 'DD/MM/y')) - (+moment(b, 'DD/MM/y'))
+          }
+        },
+        {
+          text: 'Thao tác',
+          value: 'actions',
+          sortable: false,
+        },
+      ],
+      tableData: [
+        {
+          name: 'Xăng ô tô',
+          description: 'This is a really really long text that could cause the column to stretch too wide and the table would look ugly',
+          categoryName: 'Tiền xăng xe',
+          amount: Highcharts.numberFormat(500_000, 0),
+          type: 'chi',
+          date: moment({year: 2023, month: 1, date: 15}).format('DD/MM/YY HH:MM')
+        },
+        {
+          name: 'Ăn trưa',
+          description: 'This is a really really long text t',
+          categoryName: 'Tiền ăn',
+          amount: Highcharts.numberFormat(50_000, 0),
+          type: 'chi',
+          date: moment({year: 2023, month: 1, date: 12}).format('DD/MM/YY HH:MM')
         }
-      },
-      {
-        text: 'Thao tác',
-        value: 'actions',
-        sortable: false,
-      },
-    ],
-    tableData: [
-      {
-        name: 'Xăng ô tô',
-        description: 'This is a really really long text that could cause the column to stretch too wide and the table would look ugly',
-        categoryName: 'Tiền xăng xe',
-        amount: Highcharts.numberFormat(500_000, 0),
-        date: moment({ year: 2023, month: 1, date: 15 }).format('DD/MM/YY HH:MM')
-      },
-      {
-        name: 'Ăn trưa',
-        description: 'This is a really really long text t',
-        categoryName: 'Tiền ăn',
-        amount: Highcharts.numberFormat(50_000, 0),
-        date: moment({ year: 2023, month: 1, date: 12 }).format('DD/MM/YY HH:MM')
-      }
-    ],
-    categories: [],
-  }),
+      ],
+      categories: [],
+    }
+  },
   async fetch() {
     try {
       const resCate = await this.$axios.$get('/transactions/categories-all')
@@ -128,7 +136,7 @@ export default {
       this.addEnabled = true
     },
     saveItem(item) {
-      this.transaction = item
+      console.log(item)
     },
     editItem(item) {
       this.editEnable = true

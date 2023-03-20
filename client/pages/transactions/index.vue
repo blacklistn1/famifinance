@@ -86,10 +86,10 @@
         </v-card-text>
       </v-card>
     </v-col>
+
     <ErrorDialog
-      :value="errorAny"
       :message="errorMessage"
-      @modal-close="closeModal"
+      :enabled.sync="errorAny"
     ></ErrorDialog>
   </v-row>
 </template>
@@ -255,11 +255,6 @@ export default {
       ])
     }
   },
-  methods: {
-    closeModal() {
-      this.errorAny = false
-      this.errorMessage = ''
-    },
-  },
+  methods: {},
 }
 </script>

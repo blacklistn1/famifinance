@@ -53,6 +53,9 @@ export class Transaction {
   @Column()
   amount: number;
 
+  @Column()
+  date: Date;
+
   /* Dates */
 
   @CreateDateColumn()

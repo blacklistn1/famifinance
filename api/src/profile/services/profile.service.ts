@@ -43,6 +43,8 @@ export class ProfileService {
     const newTransaction = {
       title: payload.title || 'Add balance',
       categoryId: 1,
+      type: 'thu' as const,
+      date: new Date(),
       amount: payload.amount,
     };
     return this.transactionService.addTransaction(

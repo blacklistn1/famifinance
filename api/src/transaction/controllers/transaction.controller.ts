@@ -12,13 +12,24 @@ import {
 import { TransactionService } from '../services/transaction.service';
 import { CreateTransactionDto } from '../dtos/create-transaction.dto';
 import { GoogleOAuthGuard } from '../../auth';
+import { RequestWithUser } from '../../common/types';
 
 @Controller('transactions')
 export class TransactionController {
   constructor(private transactionsService: TransactionService) {}
 
   @Post('/')
-  createTransaction(@Body() body: CreateTransactionDto) {}
+  @UseGuards(GoogleOAuthGuard)
+  async createTransaction(
+    @Req() req: RequestWithUser,
+    @Body() body: CreateTransactionDto,
+  ) {
+    try {
+      await this.transactionsService.addTransaction(body, req.user.id);
+    } catch (e) {
+      return e;
+    }
+  }
 
   @Get('/')
   @UseGuards(GoogleOAuthGuard)

@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsDefined,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateTransactionDto {
   @IsString()
@@ -16,7 +23,10 @@ export class CreateTransactionDto {
   @IsNumber()
   amount: number;
 
-  @IsOptional()
+  @IsDefined()
+  @IsDateString()
+  date: Date;
+
   @IsString()
-  direction?: 'in' | 'out';
+  type: 'thu' | 'chi';
 }

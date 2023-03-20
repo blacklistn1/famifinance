@@ -1,14 +1,16 @@
 <template>
-  <v-overlay :value="value" z-index="10">
-    <v-card color="red darken-3">
+  <!-- eslint-disable vue/no-mutating-props -->
+  <v-dialog width="500" dark>
+    <v-card color="red darken-3 white--text">
+      <v-card-title>
+        <p class="text-lg-body-1">Error</p>
+      </v-card-title>
+      <v-divider></v-divider>
       <v-card-text>
-        <p>Error: {{ message }}</p>
-        <div>
-          <v-btn color="grey" @click="$emit('modal-close')">Close</v-btn>
-        </div>
+        <p>{{ message }}</p>
       </v-card-text>
     </v-card>
-  </v-overlay>
+  </v-dialog>
 </template>
 
 <script>
@@ -17,6 +19,6 @@ export default {
   props: {
     value: Boolean,
     message: String,
-  }
+  },
 }
 </script>

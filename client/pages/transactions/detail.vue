@@ -35,95 +35,12 @@
       </v-data-table>
     </v-col>
 
-    <!-- Update transaction Overlay -->
-    <v-overlay :value="editEnable">
-      <v-card light width="1000">
-        <v-card-title>
-          <h5 class="text-h5 font-weight-bold">Chỉnh sửa giao dịch</h5>
-        </v-card-title>
-        <v-card-text>
-          <v-form>
-            <v-row justify="space-around">
-              <v-col cols="5">
-                <v-text-field v-model="editedItem.name" label="Tên giao dịch"></v-text-field>
-              </v-col>
-              <v-col cols="5">
-                <v-select
-                  v-model="editedItem.categoryName"
-                  :items="categories"
-                  offset-y
-                  label="Phân loại"
-                ></v-select>
-              </v-col>
-            </v-row>
-            <v-row justify="space-around">
-              <v-col cols="5">
-                <v-textarea v-model="editedItem.description" rows="4" label="Mô tả ngắn"></v-textarea>
-              </v-col>
-              <v-col cols="5">
-                <v-row no-gutters justify="space-around">
-                  <!-- Ngày giao dịch -->
-                  <v-col cols="5">
-                    <v-menu
-                      v-model="dateMenu"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template #activator="{ attrs, on }">
-                        <v-text-field
-                          v-model="editedItem.date"
-                          label="Ngày giao dịch"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="editedItem.date"
-                        no-title
-                        scrollable
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <!-- Giờ giao dịch -->
-                  <v-col cols="5">
-                    <v-menu
-                      ref="timeMenu"
-                      v-model="timeMenu"
-                      :return-value.sync="editedItem.time"
-                      :close-on-content-click="false"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template #activator="{ attrs, on }">
-                        <v-text-field
-                          v-model="editedItem.time"
-                          label="Giờ giao dịch"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-time-picker
-                        v-if="timeMenu"
-                        v-model="editedItem.time"
-                        format="24hr"
-                        @click:minute="$refs.timeMenu.save(editedItem.time)"
-                      ></v-time-picker>
-                    </v-menu>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-row justify="center" no-gutters>
-            <v-btn color="grey lighten-2" large @click="editEnable = !editEnable">Đóng</v-btn>
-            <v-btn color="primary" large class="ml-4" @click="console.log('a')">Gửi</v-btn>
-          </v-row>
-        </v-card-actions>
-      </v-card>
-    </v-overlay>
-    <ErrorDialog :value="errorAny" :message="errorMessage"></ErrorDialog>
+    <!-- Add transaction Overlay -->
+    <TransactionAdd
+      :enabled="addEnabled"
+      @close="saveItem"
+    ></TransactionAdd>
+    <ErrorDialog v-model="errorObject.flag" :message="errorObject.message"></ErrorDialog>
   </v-row>
 </template>
 
@@ -133,12 +50,16 @@ import Highcharts from 'highcharts'
 
 export default {
   data: () => ({
-    errorAny: false,
-    errorMessage: '',
+    errorObject: {
+      flag: false,
+      message: '',
+    },
     editEnable: false,
+    addEnabled: false,
     editedItem: {},
     dateMenu: false,
     timeMenu: false,
+    newTransaction: {},
     headers: [
       {
         text: 'Tên giao dịch',
@@ -194,18 +115,20 @@ export default {
       const resCate = await this.$axios.$get('/transactions/categories-all')
       this.categories = resCate.map(el => ({ value: el.id, text: el.title }))
     } catch (e) {
-      this.errorAny = true
-      this.errorMessage = e.message
+      this.errorObject.flag = true
+      this.errorObject.message = e.message
     }
   },
   methods: {
     resetErrors() {
-      this.errorAny = false
-      this.errorMessage = ''
+      this.errorObject.flag = false
+      this.errorObject.message = ''
     },
     addItem() {
-      this.editEnable = true
-      this.editedItem = {}
+      this.addEnabled = true
+    },
+    saveItem(item) {
+      this.transaction = item
     },
     editItem(item) {
       this.editEnable = true

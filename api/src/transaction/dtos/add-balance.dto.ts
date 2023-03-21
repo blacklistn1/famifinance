@@ -7,5 +7,5 @@ export class AddBalanceDto {
 
   @IsOptional()
   @IsString()
-  title?: string;
+  description?: string;
 }

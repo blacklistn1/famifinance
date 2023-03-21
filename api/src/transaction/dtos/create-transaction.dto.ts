@@ -25,8 +25,9 @@ export class CreateTransactionDto {
 
   @IsDefined()
   @IsDateString()
-  date: Date;
+  transactionDate: string;
 
+  @IsDefined()
   @IsString()
   type: 'thu' | 'chi';
 }

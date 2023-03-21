@@ -10,7 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { TransactionService } from '../services/transaction.service';
-import { CreateTransactionDto } from '../dtos/create-transaction.dto';
+import {
+  CreateTransactionDto,
+  AddBalanceDto,
+  UpdateTransactionDto,
+} from '../dtos';
 import { GoogleOAuthGuard } from '../../auth';
 import { RequestWithUser } from '../../common/types';
 
@@ -31,6 +35,17 @@ export class TransactionController {
     }
   }
 
+  @Post('add-balance')
+  @UseGuards(GoogleOAuthGuard)
+  async addBalance(@Req() req: RequestWithUser, @Body() body: AddBalanceDto) {
+    try {
+      return await this.transactionsService.addBalance(req.user, body);
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+  }
+
   @Get('/')
   @UseGuards(GoogleOAuthGuard)
   getTransactions(@Req() req: any, @Query() query: any) {
@@ -38,7 +53,22 @@ export class TransactionController {
   }
 
   @Patch('/:id')
-  async updateTransaction(@Param('id') id: number) {}
+  @UseGuards(GoogleOAuthGuard)
+  async updateTransaction(
+    @Req() req: RequestWithUser,
+    @Param('id') id: number,
+    body: UpdateTransactionDto,
+  ) {
+    try {
+      return await this.transactionsService.updateTransaction(
+        id,
+        req.user.id,
+        body,
+      );
+    } catch (e) {
+      return e;
+    }
+  }
 
   @Get('/categories-all')
   async getCategories() {

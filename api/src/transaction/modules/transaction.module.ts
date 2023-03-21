@@ -2,16 +2,16 @@ import { Module } from '@nestjs/common';
 import { TransactionController } from '../controllers/transaction.controller';
 import { TransactionService } from '../services/transaction.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Transaction } from '../../entities';
-import { User } from '../../entities';
+import { Profile, Category, Transaction, User } from '../../entities';
 import { UserModule } from '../../user';
-import { Category } from '../../entities';
-import { SocialModule } from '../../auth/modules/social.module';
+import { SocialModule } from '../../auth';
+import { ProfileModule } from '../../profile';
 
 @Module({
   imports: [
     SocialModule,
-    TypeOrmModule.forFeature([Transaction, User, Category]),
+    ProfileModule,
+    TypeOrmModule.forFeature([Transaction, Profile, User, Category]),
     UserModule,
   ],
   controllers: [TransactionController],

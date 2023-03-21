@@ -11,10 +11,10 @@ import { TransactionModule } from '../../transaction';
   imports: [
     UserModule,
     SocialModule,
-    TransactionModule,
     TypeOrmModule.forFeature([Profile, User]),
   ],
   controllers: [ProfileController],
   providers: [ProfileService],
+  exports: [ProfileService],
 })
 export class ProfileModule {}

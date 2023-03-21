@@ -8,9 +8,13 @@ import {
   In,
 } from 'typeorm';
 import { Transaction } from '../../entities';
-import { CreateTransactionDto } from '../dtos/create-transaction.dto';
 import { Category, User } from '../../entities';
-import { UpdateTransactionDto } from '../../common/dtos';
+import {
+  AddBalanceDto,
+  CreateTransactionDto,
+  UpdateTransactionDto,
+} from '../dtos';
+import { ProfileService } from '../../profile';
 
 @Injectable()
 export class TransactionService implements OnApplicationBootstrap {
@@ -18,6 +22,7 @@ export class TransactionService implements OnApplicationBootstrap {
     @InjectRepository(Transaction) private repo: Repository<Transaction>,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Category) private cateRepo: Repository<Category>,
+    private profileService: ProfileService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -51,14 +56,36 @@ export class TransactionService implements OnApplicationBootstrap {
     }
   }
 
-  addTransaction(
+  async addTransaction(
     transaction: CreateTransactionDto,
     userId: number,
   ): Promise<InsertResult> {
+    if (transaction.type === 'thu') {
+      await this.profileService.changeBalance(userId, transaction.amount);
+    } else {
+      await this.profileService.changeBalance(userId, -transaction.amount);
+    }
     return this.repo.insert({
       ...transaction,
+      transactionDate: new Date(Date.parse(transaction.transactionDate)),
       userId,
     });
+  }
+
+  async addBalance(user: User, payload: AddBalanceDto) {
+    const addBalanceCate = await this.cateRepo.findOne({
+      where: { title: 'Add balance' },
+    });
+    const newTransaction = {
+      userId: user.id,
+      title: 'Thêm vào số dư',
+      description: payload.description || null,
+      categoryId: addBalanceCate.id,
+      type: 'thu' as const,
+      transactionDate: new Date().toISOString(),
+      amount: payload.amount,
+    };
+    return this.addTransaction(newTransaction, user.id);
   }
 
   getTransactions(userId: number, options: any = {}): Promise<Transaction[]> {
@@ -82,12 +109,16 @@ export class TransactionService implements OnApplicationBootstrap {
     return this.cateRepo.find();
   }
 
-  updateTransaction(
+  async updateTransaction(
     id: number,
     userId: number,
     payload: UpdateTransactionDto,
-  ): Promise<UpdateResult> {
-    return this.repo.update({ id, userId }, payload);
+  ): Promise<Transaction> {
+    const [transaction] = await this.getTransactions(userId, {
+      where: { id },
+    });
+    Object.assign(transaction, payload);
+    return this.repo.save(transaction);
   }
 
   deleteTransaction(id: number): Promise<UpdateResult> {

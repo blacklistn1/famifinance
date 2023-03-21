@@ -1,16 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Patch,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { ProfileService } from '../services/profile.service';
 import { GoogleOAuthGuard } from '../../auth';
 import { RequestWithUser } from '../../common/types';
-import { AddBalanceDto } from '../dtos/add-balance.dto';
 import { ProfileDto } from '../dtos/profile.dto';
 
 @Controller('profile')
@@ -21,11 +12,6 @@ export class ProfileController {
   @Get('/')
   getProfile(@Req() req: any) {
     return this.profileService.getProfile(req.user.id);
-  }
-
-  @Post('add-balance')
-  addBalance(@Req() req: RequestWithUser, @Body() body: AddBalanceDto) {
-    return this.profileService.addBalance(req.user, body);
   }
 
   @Patch('')

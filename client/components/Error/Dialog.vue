@@ -7,7 +7,7 @@
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
-        <p class="mt-4 text-xl-body-1">{{ message }}</p>
+        <p class="mt-4 text-xl-body-1">{{ errorMessage }}</p>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -22,6 +22,16 @@ export default {
       default: false,
     },
     message: String,
+  },
+  data() {
+    return {
+      errorMessage: this.message,
+    }
+  },
+  watch:{
+    message() {
+      this.errorMessage = this.message
+    }
   },
   methods: {
     closeModal() {

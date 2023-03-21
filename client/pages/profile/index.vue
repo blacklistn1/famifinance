@@ -258,14 +258,18 @@ export default {
   },
   methods: {
     async addBalance() {
-      const res = await this.$axios.post('/profile/add-balance', {
-        amount: parseFloat(this.amount),
-        description: this.title.trim().length ? this.title : null
-      })
-      if (res.status === 201) {
-        this.addBalanceDialog = false
-        this.profile = {}
-        this.profile = await this.$axios.$get('/profile')
+      try {
+        const res = await this.$axios.post('/transactions/add-balance', {
+          amount: parseFloat(this.amount),
+          description: this.title.trim().length ? this.title : null
+        })
+        if (res.status === 201) {
+          this.addBalanceDialog = false
+          this.profile = {}
+          this.profile = await this.$axios.$get('/profile')
+        }
+      } catch (e) {
+        console.dir(e)
       }
     },
     async updateProfile() {

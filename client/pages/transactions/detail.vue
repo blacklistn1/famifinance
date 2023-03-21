@@ -35,7 +35,7 @@
       </v-data-table>
     </v-col>
     <TransactionForm
-      :enabled.sync="addEnabled"
+      :enabled.sync="formEnabled"
       method="insert"
       @insert-transaction="saveItem"
     ></TransactionForm>
@@ -55,8 +55,7 @@ export default {
         flag: false,
         message: '',
       },
-      editEnable: false,
-      addEnabled: false,
+      formEnabled: false,
       editedItem: {},
       dateMenu: false,
       timeMenu: false,
@@ -64,7 +63,7 @@ export default {
       headers: [
         {
           text: 'Tên giao dịch',
-          value: 'name',
+          value: 'title',
         },
         {
           text: 'Phân loại',
@@ -99,7 +98,8 @@ export default {
       ],
       tableData: [
         {
-          name: 'Xăng ô tô',
+          id: 1,
+          title: 'Xăng ô tô',
           description: 'This is a really really long text that could cause the column to stretch too wide and the table would look ugly',
           categoryName: 'Tiền xăng xe',
           amount: Highcharts.numberFormat(500_000, 0),
@@ -107,7 +107,8 @@ export default {
           date: moment({year: 2023, month: 1, date: 15}).format('DD/MM/YY HH:MM')
         },
         {
-          name: 'Ăn trưa',
+          id: 2,
+          title: 'Ăn trưa',
           description: 'This is a really really long text t',
           categoryName: 'Tiền ăn',
           amount: Highcharts.numberFormat(50_000, 0),
@@ -133,14 +134,14 @@ export default {
       this.errorObject.message = ''
     },
     addItem() {
-      this.addEnabled = true
+      this.formEnabled = true
     },
     saveItem(item) {
-      console.log(item)
+
     },
     editItem(item) {
-      this.editEnable = true
-      this.editedItem.name = item.name
+      this.formEnabled = true
+      this.editedItem.title = item.title
       this.editedItem.description = item.description
       this.editedItem.categoryName = item.categoryName
       this.editedItem.amount = item.amount

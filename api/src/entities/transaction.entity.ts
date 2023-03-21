@@ -54,7 +54,7 @@ export class Transaction {
   amount: number;
 
   @Column()
-  date: Date;
+  transactionDate: Date;
 
   /* Dates */
 

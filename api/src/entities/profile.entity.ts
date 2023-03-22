@@ -65,6 +65,7 @@ export class Profile {
   address?: string;
 
   @Column({
+    type: 'date',
     nullable: true,
   })
   birthDate?: Date;

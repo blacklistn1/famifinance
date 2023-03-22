@@ -3,6 +3,7 @@ import { ProfileService } from '../services/profile.service';
 import { GoogleOAuthGuard } from '../../auth';
 import { RequestWithUser } from '../../common/types';
 import { ProfileDto } from '../dtos/profile.dto';
+import { UpdateProfileDto } from '../dtos';
 
 @Controller('profile')
 @UseGuards(GoogleOAuthGuard)
@@ -17,7 +18,7 @@ export class ProfileController {
   @Patch('')
   async updateProfile(
     @Req() req: RequestWithUser,
-    @Body() payload: ProfileDto,
+    @Body() payload: UpdateProfileDto,
   ) {
     try {
       const res = await this.profileService.updateProfile(req.user.id, payload);

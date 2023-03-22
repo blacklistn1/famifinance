@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from '../../entities';
 import { GoogleOAuthGuard } from '../../auth';
 import { ProfileDto } from '../dtos/profile.dto';
+import { UpdateProfileDto } from '../dtos';
 
 @Injectable()
 @UseGuards(GoogleOAuthGuard)
@@ -38,7 +39,7 @@ export class ProfileService {
     return this.profileRepo.save(userBalance);
   }
 
-  updateProfile(userId: number, payload: ProfileDto) {
+  updateProfile(userId: number, payload: UpdateProfileDto) {
     return this.profileRepo.update({ userId }, payload);
   }
 }

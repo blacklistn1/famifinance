@@ -36,10 +36,11 @@
     </v-col>
     <TransactionForm
       :enabled.sync="formEnabled"
-      method="insert"
+      :method="formMethod"
       @insert-transaction="saveItem"
+      @update-transaction="updateItem"
     ></TransactionForm>
-    <ErrorDialog :dialog.sync="errorObject.flag" :message="errorObject.message"></ErrorDialog>
+    <DialogError :dialog.sync="errorObject.flag" :message="errorObject.message"></DialogError>
 
   </v-row>
 </template>
@@ -56,6 +57,7 @@ export default {
         message: '',
       },
       formEnabled: false,
+      formMethod: '',
       editedItem: {},
       dateMenu: false,
       timeMenu: false,
@@ -67,7 +69,7 @@ export default {
         },
         {
           text: 'Phân loại',
-          value: 'categoryName',
+          value: 'category.title',
         },
         {
           text: 'Mô tả ngắn',
@@ -101,7 +103,10 @@ export default {
           id: 1,
           title: 'Xăng ô tô',
           description: 'This is a really really long text that could cause the column to stretch too wide and the table would look ugly',
-          categoryName: 'Tiền xăng xe',
+          category: {
+            id: 1,
+            title: 'Tiền xăng xe',
+          },
           amount: Highcharts.numberFormat(500_000, 0),
           type: 'chi',
           date: moment({year: 2023, month: 1, date: 15}).format('DD/MM/YY HH:MM')
@@ -110,7 +115,10 @@ export default {
           id: 2,
           title: 'Ăn trưa',
           description: 'This is a really really long text t',
-          categoryName: 'Tiền ăn',
+          category: {
+            id: 2,
+            title: 'Tiền ăn'
+          },
           amount: Highcharts.numberFormat(50_000, 0),
           type: 'chi',
           date: moment({year: 2023, month: 1, date: 12}).format('DD/MM/YY HH:MM')
@@ -135,6 +143,7 @@ export default {
     },
     addItem() {
       this.formEnabled = true
+      this.formMethod = 'insert'
     },
     saveItem(item) {
 
@@ -147,6 +156,9 @@ export default {
       this.editedItem.amount = item.amount
       this.editedItem.date = moment(item.date, 'DD/MM/YY HH:MM').format('YYYY-MM-DD')
       this.editedItem.time = moment(item.date, 'DD/MM/YY HH:MM').format('HH:MM')
+    },
+    updateItem(item) {
+
     },
     deleteItem(item) {
       console.log('Delete item')

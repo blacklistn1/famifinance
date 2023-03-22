@@ -1,6 +1,6 @@
 <template>
   <!-- eslint-disable vue/no-mutating-props -->
-  <v-dialog v-model="enabled" width="600" @click:outside="closeModal">
+  <v-dialog v-model="enabled" width="400" @click:outside="closeModal">
     <v-card>
       <v-card-title class="red white--text">
         <p class="text-lg-body-1">Error</p>

@@ -87,10 +87,10 @@
       </v-card>
     </v-col>
 
-    <ErrorDialog
+    <DialogError
       :message="errorMessage"
       :enabled.sync="errorAny"
-    ></ErrorDialog>
+    ></DialogError>
   </v-row>
 </template>
 

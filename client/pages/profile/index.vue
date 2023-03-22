@@ -3,7 +3,7 @@
     <v-col cols="8" class="white">
       <v-card class="pa-6">
         <v-card-title>
-          <h1>Profile</h1>
+          <h1>Thông tin cá nhân</h1>
         </v-card-title>
         <v-card-text>
           <v-row>
@@ -16,15 +16,15 @@
             <v-col cols="7">
               <v-row no-gutters align="center">
                 <v-col>
-                  <h3 class="text-h3">Balance: </h3>
-                  <h2 class="text-h2 font-weight-bold">{{ profile.balance }}</h2>
+                  <h3 class="text-h4">Số sư hiện tại: </h3>
+                  <h2 class="text-h3 font-weight-bold">{{ profile.balance }}</h2>
                 </v-col>
                 <v-col>
                   <v-btn
-                    class="primary white--text pa-8"
+                    class="primary white--text pa-5"
                     @click="addBalanceDialog = true"
                   >
-                    <span class="text-h5">Add balance</span>
+                    <span class="text-lg-body-1">Add balance</span>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -33,11 +33,11 @@
           <v-row>
             <v-col cols="4">
               <v-row justify="space-between" no-gutters>
-                <span class="font-weight-bold">Name:</span>
+                <span class="font-weight-bold">Tên:</span>
                 <span class="font-weight-bold text-lg-body-1">{{ profile.name }}</span>
               </v-row>
               <v-row justify="space-between" no-gutters align-content="center">
-                <span class="font-weight-bold">Gender: </span>
+                <span class="font-weight-bold">Giới tính: </span>
                 <span class="text-lg-body-1">{{ profile.gender }}</span>
               </v-row>
             </v-col>
@@ -53,7 +53,7 @@
               </v-row>
               <v-row no-gutters justify="space-between">
                 <v-col cols="3" align-self="center">
-                  <span class="font-weight-bold">Address:</span>
+                  <span class="font-weight-bold">Địa chỉ:</span>
                 </v-col>
                 <v-col>
                   <v-text-field v-model="profile.address"></v-text-field>
@@ -61,7 +61,7 @@
               </v-row>
               <v-row no-gutters>
                 <v-col cols="3" align-self="center">
-                  <span class="font-weight-bold">Nationality:</span>
+                  <span class="font-weight-bold">Quốc tịch:</span>
                 </v-col>
                 <v-col>
                   <v-text-field v-model="profile.nationality"></v-text-field>
@@ -69,7 +69,7 @@
               </v-row>
               <v-row no-gutters justify="space-between">
                 <v-col cols="3" align-self="center">
-                  <span class="font-weight-bold">Birth date:</span>
+                  <span class="font-weight-bold">Ngày sinh:</span>
                 </v-col>
                 <v-col>
                   <v-row no-gutters>
@@ -79,8 +79,10 @@
                       md="4"
                     >
                       <v-menu
+                        ref="birthDateMenu"
                         v-model="birthDateMenu"
                         :close-on-content-click="false"
+                        :return-value.sync="profile.birthDate"
                         :nudge-right="40"
                         transition="scale-transition"
                         offset-y
@@ -95,10 +97,9 @@
                             v-on="on"
                           ></v-text-field>
                         </template>
-                        <v-date-picker
-                          v-model="profile.birthDate"
-                          @input="birthDateMenu = false"
-                        ></v-date-picker>
+                        <v-date-picker v-model="profile.birthDate">
+                          <v-btn class="pa-3" @click="$refs.birthDateMenu.save(profile.birthDate)">Lưu</v-btn>
+                        </v-date-picker>
                       </v-menu>
                     </v-col>
                   </v-row>
@@ -106,7 +107,7 @@
               </v-row>
               <v-row no-gutters>
                 <v-col cols="3" align-self="center">
-                  <span class="font-weight-bold">Job:</span>
+                  <span class="font-weight-bold">Nghề:</span>
                 </v-col>
                 <v-col>
                   <v-text-field
@@ -116,7 +117,7 @@
               </v-row>
               <v-row no-gutters>
                 <v-col cols="3" align-self="center">
-                  <span class="font-weight-bold">Gender:</span>
+                  <span class="font-weight-bold">Giới tính:</span>
                 </v-col>
                 <v-col>
                   <v-select
@@ -172,6 +173,7 @@
       </v-card>
     </v-dialog>
     <!-- ./dialog -->
+    <DialogError :enabled.sync="errorObject.enabled" :message="errorObject.message"></DialogError>
   </v-row>
 </template>
 
@@ -192,25 +194,32 @@ export default {
       factorOfThousands: multitude(1000),
     },
   },
-  data: () => ({
-    profile: {
-      gender: '',
-      address: '',
-      nationality: '',
-      job: '',
-      birthDate: '',
-    },
-    origProfile: {},
-    updateProfileDisabled: true,
-    amount: 0,
-    title: '',
-    addBalanceDialog: false,
-    birthDateMenu: false,
-    chartOptions: {
-      series: [{ data: [1, 2, 3, 4] }],
-    },
-    genderOptions: ['Male', 'Female', 'Other'],
-  }),
+  data() {
+    return {
+      profile: {
+        firstName: '',
+        gender: '',
+        address: '',
+        nationality: '',
+        job: '',
+        birthDate: '',
+      },
+      errorObject: {
+        enabled: false,
+        message: '',
+      },
+      origProfile: {},
+      updateProfileDisabled: true,
+      amount: 0,
+      title: '',
+      addBalanceDialog: false,
+      birthDateMenu: false,
+      chartOptions: {
+        series: [{ data: [1, 2, 3, 4] }],
+      },
+      genderOptions: ['Nam', 'Nữ', 'Khác'],
+    }
+  },
   async fetch() {
     this.profile = await this.$axios.$get('/profile')
     for (const key in this.profile) {
@@ -244,7 +253,7 @@ export default {
     profile: {
       handler: function (val) {
         for (const key of Object.keys(val)) {
-          if (key === 'user') continue
+          if (typeof val[key] === 'object') continue
           if (val[key] !== this.origProfile[key]) {
             this.updateProfileDisabled = false
             break
@@ -263,32 +272,56 @@ export default {
           amount: parseFloat(this.amount),
           description: this.title.trim().length ? this.title : null
         })
-        if (res.status === 201) {
+        if (res.status > 199 && res.status < 300) {
           this.addBalanceDialog = false
           this.profile = {}
           this.profile = await this.$axios.$get('/profile')
+
+        }
+        if (res.status > 399 && res.status < 500) {
+          this.errorObject.enabled = true
+          this.errorObject.message = res.data.message.join('\n')
         }
       } catch (e) {
         console.dir(e)
       }
     },
     async updateProfile() {
-      try {
-        const res = await this.$axios.patch('/profile', {
-          firstName: this.$auth.user.given_name,
-          gender: this.profile.gender || null,
-          address: this.profile.address || null,
-          nationality: this.profile.nationality || null,
-          birthDate: moment(this.profile.birthDate).toISOString() || null,
-          job: this.profile.job || null,
-        })
-        if ([200, 201].includes(res.status)) {
-          this.profile = {}
-          this.profile = await this.$axios.$get('/profile')
-          this.origProfile = JSON.parse(JSON.stringify(this.profile))
+      const payload = {};
+      if (this.profile.gender) payload.gender = this.profile.gender
+      if (this.profile.address) payload.address = this.profile.address
+      if (this.profile.nationality) payload.nationality = this.profile.nationality
+      if (this.profile.birthDate) {
+        payload.birthDate = moment(this.profile.birthDate, 'YYYY-MM-DD').toISOString()
+      }
+      if (this.profile.job) payload.job = this.profile.job
+      console.log(payload)
+      if (Object.keys(payload).length) {
+        try {
+          const res = await this.$axios.patch('/profile', payload)
+          if (res.status > 199 && res.status < 300) {
+            console.log(res)
+            // this.profile = {}
+            // this.profile = await this.$axios.$get('/profile')
+            // for (const key in this.profile) {
+            //   if (this.profile[key] === null)
+            //     this.profile[key] = ''
+            // }
+            // if (this.profile.birthDate.length) {
+            //   this.profile.birthDate = moment(this.profile.birthDate).format('YYYY-MM-DD')
+            // }
+            // this.origProfile = JSON.parse(JSON.stringify(this.profile))
+          }
+          if (res.status > 399 && res.status < 500) {
+            // this.errorObject.enabled = true
+            // if (res.data.message instanceof Array) {
+            //   this.errorObject.message = res.data.message.join('\n')
+            // }
+            console.log(res)
+          }
+        } catch (e) {
+          console.log(e)
         }
-      } catch (e) {
-        console.log(e)
       }
     }
   },

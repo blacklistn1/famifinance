@@ -5,17 +5,17 @@
         <v-col cols="4">
           <v-card min-height="100%">
             <v-card-title>
-              Balance
+              Số dư hiện tại
             </v-card-title>
             <v-card-text>
-              <span class="text-h3 font-weight-bold">{{ profile.balance }}</span>
+              <span class="text-h3 font-weight-bold">{{ formattedBalance }}</span>
             </v-card-text>
           </v-card>
         </v-col>
         <v-col cols="4">
           <v-card min-height="100%">
             <v-card-title>
-              Income this month
+              Tiết kiệm tháng này
             </v-card-title>
             <v-card-text>
               <span class="text-h3 font-weight-bold">5.000.000</span>
@@ -25,7 +25,7 @@
         <v-col cols="4">
           <v-card min-height="100%">
             <v-card-title>
-              Latest transaction
+              Giao dịch gần đây nhất
             </v-card-title>
             <v-card-text>
               <span class="text-h5">Tiền xăng xe: </span>
@@ -75,9 +75,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                  <td>Ăn lẩu</td>
-                  <td>4000000</td>
+                <tr v-for="t in mostRecentTransactions" :key="t.id">
+                  <td>{{ t.category.title }}</td>
+                  <td>{{ t.amount }}</td>
                 </tr>
                 </tbody>
               </v-simple-table>
@@ -97,6 +97,7 @@
 <script>
 import { Chart } from 'highcharts-vue'
 import moment from 'moment'
+import Highcharts from 'highcharts'
 import { randomNumber } from '~/common/helper/functions'
 
 export default {
@@ -227,14 +228,29 @@ export default {
           }
         ],
       }]
-    }
+    },
+    mostRecentTransactions: [],
   }),
   async fetch() {
     try {
       this.profile = await this.$axios.$get('/profile')
+      this.mostRecentTransactions = await this.$axios.$get('/transactions/most-recent')
+      for (const t of this.mostRecentTransactions) {
+        t.amount = Highcharts.numberFormat(parseFloat(t.amount), 0, ',', '.')
+      }
     } catch (e) {
       this.errorAny = true
       this.errorMessage = e.message
+    }
+  },
+  computed: {
+    formattedBalance() {
+      return Highcharts.numberFormat(
+        parseFloat(this.profile.balance),
+        0,
+        ',',
+        '.'
+      )
     }
   },
   mounted() {

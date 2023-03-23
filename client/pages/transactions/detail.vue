@@ -4,7 +4,7 @@
     <v-col cols="12">
       <v-row no-gutters>
         <v-col cols="12">
-          <h4 class="text-h4 font-weight-bold">Chi tiết giao dịch</h4>
+          <h4 class="text-h4 font-weight-bold">Chi tiết giao dịch tháng này</h4>
         </v-col>
       </v-row>
     </v-col>
@@ -34,11 +34,12 @@
         </template>
       </v-data-table>
     </v-col>
+
     <TransactionForm
       :enabled.sync="formEnabled"
+      :orig-transaction="editedItem"
       :method="formMethod"
-      @insert-transaction="saveItem"
-      @update-transaction="updateItem"
+      @insert-transaction="insertTransaction"
     ></TransactionForm>
     <DialogError :dialog.sync="errorObject.flag" :message="errorObject.message"></DialogError>
 
@@ -56,12 +57,28 @@ export default {
         flag: false,
         message: '',
       },
+      resDialog: {
+        enabled: false,
+        statusText: '',
+        statusCode: '',
+        message: '',
+      },
       formEnabled: false,
       formMethod: '',
-      editedItem: {},
       dateMenu: false,
       timeMenu: false,
-      newTransaction: {},
+      editedItem: {
+        title: '',
+        category: {
+          id: -1,
+        },
+        type: '',
+        amount: 0,
+        date: '',
+        time: '',
+        description: '',
+      },
+      origItem: {},
       headers: [
         {
           text: 'Tên giao dịch',
@@ -87,7 +104,7 @@ export default {
         },
         {
           text: 'Ngày giao dịch',
-          value: 'date',
+          value: 'transactionDate',
           sort: (a, b) => {
             return (+moment(a, 'DD/MM/y')) - (+moment(b, 'DD/MM/y'))
           }
@@ -98,43 +115,27 @@ export default {
           sortable: false,
         },
       ],
-      tableData: [
-        {
-          id: 1,
-          title: 'Xăng ô tô',
-          description: 'This is a really really long text that could cause the column to stretch too wide and the table would look ugly',
-          category: {
-            id: 1,
-            title: 'Tiền xăng xe',
-          },
-          amount: Highcharts.numberFormat(500_000, 0),
-          type: 'chi',
-          date: moment({year: 2023, month: 1, date: 15}).format('DD/MM/YY HH:MM')
-        },
-        {
-          id: 2,
-          title: 'Ăn trưa',
-          description: 'This is a really really long text t',
-          category: {
-            id: 2,
-            title: 'Tiền ăn'
-          },
-          amount: Highcharts.numberFormat(50_000, 0),
-          type: 'chi',
-          date: moment({year: 2023, month: 1, date: 12}).format('DD/MM/YY HH:MM')
-        }
-      ],
+      tableData: [],
       categories: [],
     }
   },
   async fetch() {
     try {
+      const transactions = await this.$axios.$get('/transactions')
+      for (const t of transactions) {
+        t.amount = Highcharts.numberFormat(parseFloat(t.amount), 0, ',', '.')
+        t.transactionDate = moment(t.transactionDate).format('DD/MM/YY HH:MM:SS')
+      }
       const resCate = await this.$axios.$get('/transactions/categories-all')
       this.categories = resCate.map(el => ({ value: el.id, text: el.title }))
+      this.tableData = transactions
     } catch (e) {
       this.errorObject.flag = true
       this.errorObject.message = e.message
     }
+  },
+  mounted() {
+    this.origItem = JSON.parse(JSON.stringify(this.editedItem))
   },
   methods: {
     resetErrors() {
@@ -144,24 +145,37 @@ export default {
     addItem() {
       this.formEnabled = true
       this.formMethod = 'insert'
+      this.editedItem = JSON.parse(JSON.stringify(this.origItem))
     },
-    saveItem(item) {
-
-    },
+    saveItem() {},
     editItem(item) {
+      console.log(item)
       this.formEnabled = true
-      this.editedItem.title = item.title
-      this.editedItem.description = item.description
-      this.editedItem.categoryName = item.categoryName
-      this.editedItem.amount = item.amount
-      this.editedItem.date = moment(item.date, 'DD/MM/YY HH:MM').format('YYYY-MM-DD')
-      this.editedItem.time = moment(item.date, 'DD/MM/YY HH:MM').format('HH:MM')
+      Object.assign(this.editedItem, {
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        category: { id: item.category.id },
+        amount: item.amount,
+        type: item.type,
+        date: moment(item.transactionDate, 'DD/MM/YY HH:MM:SS').format('YYYY-MM-DD'),
+        time: moment(item.transactionDate, 'DD/MM/YY HH:MM:SS').format('HH:MM'),
+      })
     },
     updateItem(item) {
 
     },
+    insertTransaction(transaction) {
+      const t = transaction
+      t.amount = Highcharts.numberFormat(parseFloat(t.amount), 0, ',', '.')
+      t.transactionDate = moment(t.transactionDate).format('DD/MM/YY HH:MM:SS')
+      this.tableData.push(transaction)
+    },
     deleteItem(item) {
       console.log('Delete item')
+    },
+      closeFormModal() {
+      this.formEnabled = false
     }
   }
 }

@@ -16,7 +16,7 @@
             <v-col cols="7">
               <v-row no-gutters align="center">
                 <v-col>
-                  <h3 class="text-h4">Số sư hiện tại: </h3>
+                  <h3 class="text-h4">Số dư hiện tại: </h3>
                   <h2 class="text-h3 font-weight-bold">{{ profile.balance }}</h2>
                 </v-col>
                 <v-col>
@@ -24,7 +24,7 @@
                     class="primary white--text pa-5"
                     @click="addBalanceDialog = true"
                   >
-                    <span class="text-lg-body-1">Add balance</span>
+                    <span class="text-lg-body-2">Thêm vào số dư</span>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -291,32 +291,26 @@ export default {
       if (this.profile.gender) payload.gender = this.profile.gender
       if (this.profile.address) payload.address = this.profile.address
       if (this.profile.nationality) payload.nationality = this.profile.nationality
-      if (this.profile.birthDate) {
-        payload.birthDate = moment(this.profile.birthDate, 'YYYY-MM-DD').toISOString()
-      }
+      if (this.profile.birthDate) payload.birthDate = this.profile.birthDate
       if (this.profile.job) payload.job = this.profile.job
       console.log(payload)
       if (Object.keys(payload).length) {
         try {
           const res = await this.$axios.patch('/profile', payload)
           if (res.status > 199 && res.status < 300) {
-            console.log(res)
-            // this.profile = {}
-            // this.profile = await this.$axios.$get('/profile')
-            // for (const key in this.profile) {
-            //   if (this.profile[key] === null)
-            //     this.profile[key] = ''
-            // }
-            // if (this.profile.birthDate.length) {
-            //   this.profile.birthDate = moment(this.profile.birthDate).format('YYYY-MM-DD')
-            // }
-            // this.origProfile = JSON.parse(JSON.stringify(this.profile))
+            this.profile = {}
+            this.profile = await this.$axios.$get('/profile')
+            for (const key in this.profile) {
+              if (this.profile[key] === null)
+                this.profile[key] = ''
+            }
+            this.origProfile = JSON.parse(JSON.stringify(this.profile))
           }
           if (res.status > 399 && res.status < 500) {
-            // this.errorObject.enabled = true
-            // if (res.data.message instanceof Array) {
-            //   this.errorObject.message = res.data.message.join('\n')
-            // }
+            this.errorObject.enabled = true
+            if (res.data.message instanceof Array) {
+              this.errorObject.message = res.data.message.join('\n')
+            }
             console.log(res)
           }
         } catch (e) {

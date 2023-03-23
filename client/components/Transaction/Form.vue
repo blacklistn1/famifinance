@@ -140,6 +140,10 @@ import moment from 'moment'
 export default {
   props: {
     enabled: Boolean,
+    // origTransaction: {
+    //   type: Object,
+    //   default: () => ({}),
+    // },
     origTransaction: {
       type: Object,
       default: () => ({
@@ -154,6 +158,7 @@ export default {
           }),
         },
         type: String,
+        amount: Number,
         date: String,
         time: String,
       }),
@@ -178,6 +183,15 @@ export default {
   async fetch() {
     this.categories = await this.$axios.$get('/transactions/categories-all')
   },
+  watch: {
+    origTransaction: {
+      handler: function (val) {
+        this.transaction = JSON.parse(JSON.stringify(val))
+
+      },
+      deep: true,
+    }
+  },
   methods: {
     closeModal() {
       this.$emit('update:enabled', false)
@@ -192,13 +206,13 @@ export default {
           [this.transaction.date, this.transaction.time].join(' '),
           'YYYY-MM-DD HH:MM'
         ).toISOString()
-        console.log(this.transaction)
+        // console.log(this.transaction)
         console.log(transactionDate)
         try {
           const res = await this.$axios.post('/transactions', {
             title: this.transaction.title,
             description: this.transaction.description || null,
-            categoryId: this.transaction.category.id,
+            categoryId: parseFloat(this.transaction.category.id),
             type: this.transaction.type,
             amount: parseFloat(this.transaction.amount),
             transactionDate,

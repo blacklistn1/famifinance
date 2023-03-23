@@ -22,7 +22,7 @@
                 Balance
               </v-card-title>
               <v-card-text>
-                <span class="text-h3 font-weight-bold">{{ profile.balance }}</span>
+                <span class="text-h3 font-weight-bold">{{ formattedBalance }}</span>
               </v-card-text>
             </v-card>
           </v-col>
@@ -83,6 +83,8 @@
 </template>
 
 <script>
+import Highcharts from 'highcharts';
+
 export default {
   data: () => ({
     errorDialog: {
@@ -97,6 +99,16 @@ export default {
     if (this.$auth.loggedIn) {
       this.transactions = await this.getTransactions()
       this.profile = await this.getProfile()
+    }
+  },
+  computed: {
+    formattedBalance() {
+      return Highcharts.numberFormat(
+        parseFloat(this.profile.balance),
+        0,
+        ',',
+        '.'
+      )
     }
   },
   methods: {

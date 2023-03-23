@@ -40,7 +40,7 @@ export class TransactionController {
   @UseGuards(GoogleOAuthGuard)
   async addBalance(@Req() req: RequestWithUser, @Body() body: AddBalanceDto) {
     try {
-      return await this.transactionsService.addBalance(1, body);
+      return await this.transactionsService.addBalance(req.user.id, body);
     } catch (e) {
       console.log(e);
       return e;
@@ -72,7 +72,7 @@ export class TransactionController {
   async updateTransaction(
     @Req() req: RequestWithUser,
     @Param('id') id: number,
-    body: UpdateTransactionDto,
+    @Body() body: UpdateTransactionDto,
   ) {
     try {
       return await this.transactionsService.updateTransaction(

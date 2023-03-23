@@ -14,6 +14,15 @@ export class ProfileController {
     return this.profileService.getProfile(req.user.id);
   }
 
+  @Get('balance')
+  async getBalance(@Req() req: RequestWithUser) {
+    try {
+      return await this.profileService.getBalance(req.user.id);
+    } catch (e) {
+      return e;
+    }
+  }
+
   @Patch('')
   async updateProfile(
     @Req() req: RequestWithUser,

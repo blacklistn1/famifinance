@@ -19,6 +19,7 @@ import {
 } from '../dtos';
 import { ProfileService } from '../../profile';
 import * as moment from 'moment';
+import { TransactionType } from '../../common/types';
 
 @Injectable()
 export class TransactionService implements OnApplicationBootstrap {
@@ -182,11 +183,21 @@ export class TransactionService implements OnApplicationBootstrap {
     userId: number,
     payload: UpdateTransactionDto,
   ): Promise<Transaction> {
-    const [transaction] = await this.getTransactions(userId, {
-      where: { id },
-    });
-    Object.assign(transaction, payload);
-    return this.repo.save(transaction);
+    try {
+      const transaction = await this.repo.findOne({
+        where: { id, userId },
+      });
+      const amount = payload.amount && payload.amount - transaction.amount;
+      await this.profileService.changeBalance(
+        userId,
+        amount,
+        transaction.type as TransactionType,
+      );
+      Object.assign(transaction, payload);
+      return this.repo.save(transaction);
+    } catch (e) {
+      return e;
+    }
   }
 
   deleteTransaction(id: number): Promise<UpdateResult> {

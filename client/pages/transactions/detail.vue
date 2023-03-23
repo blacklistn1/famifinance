@@ -40,6 +40,7 @@
       :orig-transaction="editedItem"
       :method="formMethod"
       @insert-transaction="insertTransaction"
+      @update-transaction="updateItem"
     ></TransactionForm>
     <DialogError :dialog.sync="errorObject.flag" :message="errorObject.message"></DialogError>
 
@@ -48,7 +49,6 @@
 
 <script>
 import moment from 'moment'
-import Highcharts from 'highcharts'
 
 export default {
   data() {
@@ -123,7 +123,6 @@ export default {
     try {
       const transactions = await this.$axios.$get('/transactions')
       for (const t of transactions) {
-        t.amount = Highcharts.numberFormat(parseFloat(t.amount), 0, ',', '.')
         t.transactionDate = moment(t.transactionDate).format('DD/MM/YY HH:MM:SS')
       }
       const resCate = await this.$axios.$get('/transactions/categories-all')
@@ -149,8 +148,8 @@ export default {
     },
     saveItem() {},
     editItem(item) {
-      console.log(item)
       this.formEnabled = true
+      this.formMethod = 'update'
       Object.assign(this.editedItem, {
         id: item.id,
         title: item.title,
@@ -163,11 +162,20 @@ export default {
       })
     },
     updateItem(item) {
-
+      item.transactionDate = moment(item.transactionDate).format('DD/MM/YY HH:MM:SS')
+      const i = this.tableData.findIndex(el => el.id === item.id)
+      Object.assign(this.tableData[i], {
+        id: item.id,
+        title: item.title,
+        amount: item.amount,
+        category: item.category,
+        type: item.type,
+        description: item.description,
+        transactionDate: item.transactionDate,
+      })
     },
     insertTransaction(transaction) {
       const t = transaction
-      t.amount = Highcharts.numberFormat(parseFloat(t.amount), 0, ',', '.')
       t.transactionDate = moment(t.transactionDate).format('DD/MM/YY HH:MM:SS')
       this.tableData.push(transaction)
     },

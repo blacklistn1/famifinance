@@ -31,7 +31,7 @@
               ></v-text-field>
             </v-col>
             <v-col cols="5">
-              <v-radio-group v-model="transaction.type" row>
+              <v-radio-group v-model="transaction.type" row :disabled="method === 'update'">
                 <template #label>
                   <span class="font-weight-bold">Loại giao dịch</span>
                 </template>
@@ -120,13 +120,18 @@
     </v-card>
     <v-dialog v-model="resDialog.enabled" width="400" @click:outside.self="resDialog.enabled = false">
       <v-card>
-        <v-card-title>
+        <v-card-title :class="colorClass">
           <h5 class="text-h5 font-weight-bold">{{ resDialog.statusText }}</h5>
         </v-card-title>
         <v-divider></v-divider>
         <v-card-text>
           <p>Status code: {{ resDialog.statusCode }}</p>
-          <p>message: {{ resDialog.message }}</p>
+          <p v-if="resDialog.message">message: {{ resDialog.message }}</p>
+          <ul v-if="resDialog.messages.length">
+            <li v-for="(m,i) in resDialog.messages" :key="i">
+              {{ m }}
+            </li>
+          </ul>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -169,9 +174,10 @@ export default {
     return {
       resDialog: {
         enabled: false,
-        statusCode: '',
+        statusCode: -1,
         statusText: '',
         message: '',
+        messages: [],
       },
       dialog: this.enabled,
       dateMenu: false,
@@ -182,6 +188,12 @@ export default {
   },
   async fetch() {
     this.categories = await this.$axios.$get('/transactions/categories-all')
+  },
+  computed: {
+    colorClass() {
+      if (this.resDialog.statusCode > 199 && this.resDialog.statusCode < 300) return 'success'
+      return 'error white--text'
+    },
   },
   watch: {
     origTransaction: {
@@ -197,33 +209,65 @@ export default {
       this.$emit('update:enabled', false)
     },
     async submitTransaction() {
+      const transactionDate = moment(
+        [this.transaction.date, this.transaction.time].join(' '),
+        'YYYY-MM-DD HH:MM'
+      ).toISOString()
+      const payload = {
+        title: this.transaction.title,
+        categoryId: parseFloat(this.transaction.category.id),
+        type: this.transaction.type,
+        amount: parseFloat(this.transaction.amount),
+        transactionDate,
+      }
 
       if (this.method === 'update') {
+        if (this.transaction.description.length)
+          Object.assign(payload, {
+            description: this.transaction.description
+          })
+        try {
+          const res = await this.$axios.patch(
+            '/transactions/' + this.transaction.id,
+            payload
+          )
+          this.resDialog.enabled = true
+          this.resDialog.statusCode = res.status
+          this.resDialog.statusText = res.statusText
+          if (res.status > 199 && res.status < 300) {
+            this.resDialog.message = 'Update successful'
+          }
+          if (res.status === 400) {
+            this.resDialog.messages.push(...res.data.message)
+          }
+        } catch (e) {
+          this.resDialog.enabled = true
+          this.resDialog.statusCode = 500
+          this.resDialog.message = 'Network error'
+        }
         this.$emit('update-transaction', this.transaction)
       }
+
       if (this.method === 'insert') {
-        const transactionDate = moment(
-          [this.transaction.date, this.transaction.time].join(' '),
-          'YYYY-MM-DD HH:MM'
-        ).toISOString()
-        // console.log(this.transaction)
+        console.log(this.transaction.date, this.transaction.time)
         console.log(transactionDate)
-        try {
-          const res = await this.$axios.post('/transactions', {
-            title: this.transaction.title,
-            description: this.transaction.description || null,
-            categoryId: parseFloat(this.transaction.category.id),
-            type: this.transaction.type,
-            amount: parseFloat(this.transaction.amount),
-            transactionDate,
+        if (this.transaction.description)
+          Object.assign(payload, {
+            description: this.transaction.description
           })
+        try {
+          const res = await this.$axios.post('/transactions', payload)
           this.resDialog.enabled = true
+          this.resDialog.statusCode = res.status
           this.resDialog.statusText = res.statusText
           if (res.status > 199 && res.status < 300) {
             this.resDialog.message = 'Response has succeeded'
           }
           if (res.status > 399 && res.status < 500) {
             this.resDialog.message = 'Response has failed'
+            if (res.status === 400) {
+              this.resDialog.messages.push(...res.data.message)
+            }
             console.info(res.data)
           }
         } catch (e) {

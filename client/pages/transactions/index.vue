@@ -28,8 +28,8 @@
               Giao dịch gần đây nhất
             </v-card-title>
             <v-card-text>
-              <span class="text-h5">Tiền xăng xe: </span>
-              <span class="text-h3 font-weight-bold">80.000</span>
+              <span class="text-h5">{{ mostRecentTransaction.title }}:</span>
+              <span class="text-h3 font-weight-bold">{{ mostRecentTransaction.amount }}</span>
             </v-card-text>
           </v-card>
         </v-col>
@@ -229,7 +229,15 @@ export default {
         ],
       }]
     },
-    mostRecentTransactions: [],
+    mostRecentTransactions: [
+      {
+        title: '',
+        category: { id: -1 },
+        transactionDate: '',
+        type: '',
+        amount: 0,
+      }
+    ],
   }),
   async fetch() {
     try {
@@ -251,6 +259,10 @@ export default {
         ',',
         '.'
       )
+    },
+    mostRecentTransaction() {
+      const { title, amount } = this.mostRecentTransactions[0]
+      return { title, amount }
     }
   },
   mounted() {

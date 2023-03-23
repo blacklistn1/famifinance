@@ -3,7 +3,7 @@
   <v-dialog v-model="enabled" width="1000" @click:outside="closeModal">
     <v-card>
       <v-card-title>
-        <h4 class="text-h4 font-weight-bold">Thêm giao dịch</h4>
+        <h4 class="text-h4 font-weight-bold">{{ cardTitle }}</h4>
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -194,6 +194,11 @@ export default {
       if (this.resDialog.statusCode > 199 && this.resDialog.statusCode < 300) return 'success'
       return 'error white--text'
     },
+    cardTitle() {
+      return this.method === 'insert'
+        ? 'Thêm giao dịch'
+        : 'Cập nhật giao dịch'
+    }
   },
   watch: {
     origTransaction: {
@@ -210,8 +215,8 @@ export default {
     },
     async submitTransaction() {
       const transactionDate = moment(
-        [this.transaction.date, this.transaction.time].join(' '),
-        'YYYY-MM-DD HH:MM'
+        [this.transaction.date, this.transaction.time].join('T'),
+        moment.DATETIME_LOCAL
       ).toISOString()
       const payload = {
         title: this.transaction.title,
@@ -222,7 +227,7 @@ export default {
       }
 
       if (this.method === 'update') {
-        if (this.transaction.description.length)
+        if (this.transaction.description)
           Object.assign(payload, {
             description: this.transaction.description
           })

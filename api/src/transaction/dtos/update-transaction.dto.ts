@@ -1,8 +1,16 @@
-import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class UpdateTransactionDto {
   @IsOptional()
   @IsString()
+  @IsNotEmpty()
   title?: string;
 
   @IsOptional()
@@ -15,9 +23,11 @@ export class UpdateTransactionDto {
 
   @IsOptional()
   @IsNumber()
+  @Min(1000)
   amount?: number;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsDateString()
   transactionDate?: string;
 }

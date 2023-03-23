@@ -85,10 +85,15 @@ export class TransactionController {
     }
   }
 
+  @Get('/sum-by-category')
+  async sumOfAmountByCategory(@Query() query: any) {
+    return await this.transactionsService.getSumAmountByCategory(1, query);
+  }
+
   @Get('/categories-all')
-  async getCategories() {
+  async getCategories(@Query() query: any) {
     try {
-      return await this.transactionsService.getCategories();
+      return await this.transactionsService.getCategories(query);
     } catch (e) {
       return e;
     }

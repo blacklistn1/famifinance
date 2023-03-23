@@ -9,6 +9,7 @@ import {
   Between,
   MoreThanOrEqual,
   LessThanOrEqual,
+  FindOptionsWhere,
 } from 'typeorm';
 import { Transaction } from '../../entities';
 import { Category, User } from '../../entities';
@@ -41,6 +42,8 @@ export class TransactionService implements OnApplicationBootstrap {
       'Tiệc cưới',
       'Học phí',
       'Viện phí',
+      'Chuyển khoản',
+      'Thanh toán',
     ];
 
     /* Search for default categories */
@@ -96,7 +99,7 @@ export class TransactionService implements OnApplicationBootstrap {
 
   getTransactions(userId: number, query: any = {}): Promise<Transaction[]> {
     const findOptions: FindManyOptions<Transaction> = {
-      order: { updatedAt: 'DESC' },
+      order: { transactionDate: 'DESC' },
       take: 50,
       where: {
         transactionDate: Between(
@@ -117,10 +120,10 @@ export class TransactionService implements OnApplicationBootstrap {
         } as FindManyOptions<Transaction>);
       }
       if (query.type === 'monthly') {
-        const year =
-          (query.year && parseFloat(query.year)) || moment().get('year');
-        const month =
-          (query.month && parseFloat(query.month) - 1) || moment().get('month');
+        const year = query.year ? parseFloat(query.year) : moment().get('year');
+        const month = query.month
+          ? parseFloat(query.month) - 1
+          : moment().get('month');
         Object.assign(findOptions.where, {
           transactionDate: Between(
             moment({ year, month }).startOf('month').toDate(),
@@ -165,7 +168,7 @@ export class TransactionService implements OnApplicationBootstrap {
     return this.repo.find({
       where: { userId },
       order: {
-        updatedAt: 'DESC',
+        transactionDate: 'DESC',
       },
       take: 5,
       relations: {
@@ -174,8 +177,60 @@ export class TransactionService implements OnApplicationBootstrap {
     });
   }
 
-  getCategories() {
+  getCategories(query: any = {}) {
     return this.cateRepo.find();
+  }
+
+  async getSumAmountByCategory(userId: number, query: any) {
+    const result = [];
+    const dateInput = {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth(),
+    };
+
+    const findOptionsWhere: FindOptionsWhere<Transaction> = {
+      userId,
+    };
+    if (query.cateId) {
+      Object.assign(findOptionsWhere, {
+        categoryId: parseFloat(query.cateId),
+      });
+    }
+    if (query.month) {
+      dateInput.month = parseFloat(query.month) - 1;
+    }
+    if (query.year) {
+      dateInput.year = parseFloat(query.year);
+    }
+    const startDate = moment(dateInput).startOf('month');
+    const endDate = moment(dateInput).endOf('month');
+    Object.assign(findOptionsWhere, {
+      transactionDate: Between(startDate.toDate(), endDate.toDate()),
+    });
+
+    if (findOptionsWhere.categoryId) {
+      const category = await this.cateRepo.findOneBy({
+        id: findOptionsWhere.categoryId,
+      });
+      const sumAmount = (await this.repo.sum('amount', findOptionsWhere)) || 0;
+      return {
+        category,
+        sumAmount,
+      };
+    } else {
+      const categories = await this.cateRepo.find();
+      for (const c of categories) {
+        const t = await this.repo.sum('amount', {
+          ...findOptionsWhere,
+          categoryId: c.id,
+        });
+        result.push({
+          category: c,
+          sumAmount: t || 0,
+        });
+      }
+      return result;
+    }
   }
 
   async updateTransaction(
@@ -193,8 +248,15 @@ export class TransactionService implements OnApplicationBootstrap {
         amount,
         transaction.type as TransactionType,
       );
-      Object.assign(transaction, payload);
-      return this.repo.save(transaction);
+      const res = await this.repo.update({ id, userId }, payload);
+      if (res.generatedMaps.length) {
+        return this.repo.findOne({
+          where: { id, userId },
+          relations: {
+            category: true,
+          },
+        });
+      }
     } catch (e) {
       return e;
     }

@@ -17,6 +17,7 @@ import {
 } from '../dtos';
 import { GoogleOAuthGuard } from '../../auth';
 import { RequestWithUser } from '../../common/types';
+import * as moment from 'moment';
 
 @Controller('transactions')
 export class TransactionController {
@@ -39,7 +40,7 @@ export class TransactionController {
   @UseGuards(GoogleOAuthGuard)
   async addBalance(@Req() req: RequestWithUser, @Body() body: AddBalanceDto) {
     try {
-      return await this.transactionsService.addBalance(req.user, body);
+      return await this.transactionsService.addBalance(1, body);
     } catch (e) {
       console.log(e);
       return e;
@@ -48,8 +49,22 @@ export class TransactionController {
 
   @Get('/')
   @UseGuards(GoogleOAuthGuard)
-  getTransactions(@Req() req: any, @Query() query: any) {
-    return this.transactionsService.getTransactions(req.user.id, query);
+  async getTransactions(@Req() req: any, @Query() query: any) {
+    try {
+      return await this.transactionsService.getTransactions(req.user.id, query);
+    } catch (e) {
+      return e;
+    }
+  }
+
+  @Get('most-recent')
+  @UseGuards(GoogleOAuthGuard)
+  async getMostRecentTransaction(@Req() req: RequestWithUser) {
+    try {
+      return await this.transactionsService.mostRecentTransaction(req.user.id);
+    } catch (e) {
+      return e;
+    }
   }
 
   @Patch('/:id')

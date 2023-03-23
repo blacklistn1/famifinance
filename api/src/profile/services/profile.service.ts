@@ -6,6 +6,7 @@ import { User } from '../../entities';
 import { GoogleOAuthGuard } from '../../auth';
 import { ProfileDto } from '../dtos/profile.dto';
 import { UpdateProfileDto } from '../dtos';
+import { TransactionType } from '../../common/types';
 
 @Injectable()
 @UseGuards(GoogleOAuthGuard)
@@ -33,10 +34,16 @@ export class ProfileService {
     });
   }
 
-  async changeBalance(userId: number, balance: number) {
-    const userBalance = await this.getProfile(userId);
-    userBalance.balance += balance;
-    return this.profileRepo.save(userBalance);
+  async changeBalance(userId: number, amount: number, type: TransactionType) {
+    const userBalance = await this.getBalance(userId);
+    if (type === 'thu') userBalance.balance += amount;
+    else userBalance.balance -= amount;
+    return this.profileRepo.update(
+      { userId },
+      {
+        balance: userBalance.balance,
+      },
+    );
   }
 
   updateProfile(userId: number, payload: UpdateProfileDto) {

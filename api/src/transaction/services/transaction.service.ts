@@ -6,6 +6,9 @@ import {
   FindManyOptions,
   InsertResult,
   In,
+  Between,
+  MoreThanOrEqual,
+  LessThanOrEqual,
 } from 'typeorm';
 import { Transaction } from '../../entities';
 import { Category, User } from '../../entities';
@@ -15,6 +18,7 @@ import {
   UpdateTransactionDto,
 } from '../dtos';
 import { ProfileService } from '../../profile';
+import * as moment from 'moment';
 
 @Injectable()
 export class TransactionService implements OnApplicationBootstrap {
@@ -60,24 +64,25 @@ export class TransactionService implements OnApplicationBootstrap {
     transaction: CreateTransactionDto,
     userId: number,
   ): Promise<InsertResult> {
-    if (transaction.type === 'thu') {
-      await this.profileService.changeBalance(userId, transaction.amount);
-    } else {
-      await this.profileService.changeBalance(userId, -transaction.amount);
-    }
+    await this.profileService.changeBalance(
+      userId,
+      transaction.amount,
+      transaction.type,
+    );
+
     return this.repo.insert({
       ...transaction,
-      transactionDate: new Date(Date.parse(transaction.transactionDate)),
+      transactionDate: transaction.transactionDate,
       userId,
     });
   }
 
-  async addBalance(user: User, payload: AddBalanceDto) {
+  async addBalance(userId: number, payload: AddBalanceDto) {
     const addBalanceCate = await this.cateRepo.findOne({
       where: { title: 'Add balance' },
     });
     const newTransaction = {
-      userId: user.id,
+      userId,
       title: 'Thêm vào số dư',
       description: payload.description || null,
       categoryId: addBalanceCate.id,
@@ -85,14 +90,64 @@ export class TransactionService implements OnApplicationBootstrap {
       transactionDate: new Date().toISOString(),
       amount: payload.amount,
     };
-    return this.addTransaction(newTransaction, user.id);
+    return this.addTransaction(newTransaction, userId);
   }
 
-  getTransactions(userId: number, options: any = {}): Promise<Transaction[]> {
-    const findOptions: FindManyOptions<Transaction> = options;
-    findOptions.order = {
-      createdAt: 'desc',
+  getTransactions(userId: number, query: any = {}): Promise<Transaction[]> {
+    const findOptions: FindManyOptions<Transaction> = {
+      order: { updatedAt: 'DESC' },
+      take: 50,
+      where: {
+        transactionDate: Between(
+          moment().startOf('month').toDate(),
+          moment().endOf('month').toDate(),
+        ),
+      },
     };
+    if (query.type) {
+      // defaults to monthly and this month
+      if (query.type === 'yearly') {
+        const year = parseFloat(query.year) || new Date().getFullYear();
+        Object.assign(findOptions.where, {
+          transactionDate: Between(
+            moment({ year }).startOf('year').toDate(),
+            moment({ year }).endOf('year').toDate(),
+          ),
+        } as FindManyOptions<Transaction>);
+      }
+      if (query.type === 'monthly') {
+        const year =
+          (query.year && parseFloat(query.year)) || moment().get('year');
+        const month =
+          (query.month && parseFloat(query.month) - 1) || moment().get('month');
+        Object.assign(findOptions.where, {
+          transactionDate: Between(
+            moment({ year, month }).startOf('month').toDate(),
+            moment({ year, month }).endOf('month').toDate(),
+          ),
+        } as FindManyOptions<Transaction>);
+      }
+    }
+    if (query.limit || query.take) {
+      findOptions.take = +query.limit || +query.take;
+    }
+    if (query.categoryId) {
+      Object.assign(findOptions.where, {
+        categoryId: query.categoryId,
+      } as FindManyOptions<Transaction>);
+    }
+    if (query.min) {
+      const min = parseFloat(query.min);
+      Object.assign(findOptions.where, {
+        amount: MoreThanOrEqual(min),
+      } as FindManyOptions<Transaction>);
+    }
+    if (query.max) {
+      const max = parseFloat(query.max);
+      Object.assign(findOptions.where, {
+        amount: LessThanOrEqual(max),
+      } as FindManyOptions<Transaction>);
+    }
     return this.repo.find({
       where: {
         userId,
@@ -102,6 +157,19 @@ export class TransactionService implements OnApplicationBootstrap {
         category: true,
       },
       ...findOptions,
+    });
+  }
+
+  mostRecentTransaction(userId: number) {
+    return this.repo.find({
+      where: { userId },
+      order: {
+        updatedAt: 'DESC',
+      },
+      take: 5,
+      relations: {
+        category: true,
+      },
     });
   }
 

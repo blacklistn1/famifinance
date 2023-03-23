@@ -12,10 +12,6 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   title: string;
 
-  @IsOptional()
-  @IsString()
-  description?: string;
-
   @IsNumber()
   @IsNotEmpty()
   categoryId: number;
@@ -30,4 +26,8 @@ export class CreateTransactionDto {
   @IsDefined()
   @IsString()
   type: 'thu' | 'chi';
+
+  @IsOptional()
+  @IsString()
+  description?: string;
 }

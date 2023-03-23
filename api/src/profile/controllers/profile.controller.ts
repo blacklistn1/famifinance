@@ -2,7 +2,6 @@ import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { ProfileService } from '../services/profile.service';
 import { GoogleOAuthGuard } from '../../auth';
 import { RequestWithUser } from '../../common/types';
-import { ProfileDto } from '../dtos/profile.dto';
 import { UpdateProfileDto } from '../dtos';
 
 @Controller('profile')

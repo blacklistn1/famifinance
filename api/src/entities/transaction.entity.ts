@@ -71,7 +71,7 @@ export class Transaction {
 
   @ManyToOne(() => User, {
     onUpdate: 'CASCADE',
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   user: User;
 

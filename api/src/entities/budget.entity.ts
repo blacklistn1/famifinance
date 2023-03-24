@@ -5,10 +5,12 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { BudgetCategory } from './budget-category.entity';
+import { Transaction } from './transaction.entity';
 
 @Entity()
 export class Budget {
@@ -31,7 +33,10 @@ export class Budget {
   @Column()
   endDate: Date;
 
-  @Column()
+  @Column('varchar', {
+    length: 50,
+    comment: 'Loại giao dịch như theo tháng, theo năm, theo dự án, ...',
+  })
   type: string;
 
   @Column()
@@ -56,7 +61,7 @@ export class Budget {
 
   @ManyToOne(() => User, {
     onUpdate: 'CASCADE',
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   user: User;
 
@@ -65,4 +70,7 @@ export class Budget {
     onDelete: 'SET NULL',
   })
   category: BudgetCategory;
+
+  @OneToMany(() => Transaction, (t) => t.budget)
+  transactions: Transaction[];
 }

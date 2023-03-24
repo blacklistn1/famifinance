@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -67,6 +69,16 @@ export class TransactionController {
     }
   }
 
+  @Get('sum-by-month')
+  @UseGuards(GoogleOAuthGuard)
+  async sumByMonth(@Req() req: RequestWithUser, @Query() query: any) {
+    return await this.transactionsService.sumByTime(
+      req.user.id,
+      query,
+      'month',
+    );
+  }
+
   @Patch('/:id')
   @UseGuards(GoogleOAuthGuard)
   async updateTransaction(
@@ -86,8 +98,28 @@ export class TransactionController {
   }
 
   @Get('/sum-by-category')
-  async sumOfAmountByCategory(@Query() query: any) {
-    return await this.transactionsService.getSumAmountByCategory(1, query);
+  @UseGuards(GoogleOAuthGuard)
+  async sumOfAmountByCategory(
+    @Req() req: RequestWithUser,
+    @Query() query: any,
+  ) {
+    return await this.transactionsService.getSumAmountByCategory(
+      req.user.id,
+      query,
+    );
+  }
+
+  @Delete(':id')
+  @UseGuards(GoogleOAuthGuard)
+  async deleteTransaction(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    try {
+      return await this.transactionsService.deleteTransaction(req.user.id, id);
+    } catch (e) {
+      return e;
+    }
   }
 
   @Get('/categories-all')
@@ -95,6 +127,16 @@ export class TransactionController {
     try {
       return await this.transactionsService.getCategories(query);
     } catch (e) {
+      return e;
+    }
+  }
+
+  @Get('load-sample-data')
+  async loadSampleData() {
+    try {
+      return await this.transactionsService.loadSampleData();
+    } catch (e) {
+      console.log(e);
       return e;
     }
   }

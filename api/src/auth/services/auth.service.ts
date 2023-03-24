@@ -48,6 +48,7 @@ export class AuthService {
 
   refreshToken() {
     this.gc.on('tokens', (tokens) => {
+      this.gc.setCredentials(tokens);
       const { access_token } = tokens;
       return { access_token };
     });

@@ -21,6 +21,7 @@ import {
 import { ProfileService } from '../../profile';
 import * as moment from 'moment';
 import { TransactionType } from '../../common/types';
+import { faker } from '@faker-js/faker';
 
 @Injectable()
 export class TransactionService implements OnApplicationBootstrap {
@@ -95,6 +96,56 @@ export class TransactionService implements OnApplicationBootstrap {
       amount: payload.amount,
     };
     return this.addTransaction(newTransaction, userId);
+  }
+
+  async sumByTime(userId: number, query: any, period: string) {
+    const year = query.year ? parseFloat(query.year) : moment().get('year');
+    const month = query.month
+      ? parseFloat(query.month) - 1
+      : moment().get('month');
+    if (period === 'month') {
+      const resultMap = new Map();
+      const result = [];
+      const findOptions: FindManyOptions<Transaction> = {
+        where: {
+          userId,
+          type: 'chi' as TransactionType,
+          transactionDate: Between(
+            moment([year, month]).startOf('month').toDate(),
+            moment([year, month]).endOf('month').toDate(),
+          ),
+        },
+        order: {
+          transactionDate: 'ASC',
+        },
+        relations: {
+          category: true,
+        },
+      };
+      try {
+        const transactions = await this.repo.find(findOptions);
+        for (const t of transactions) {
+          const d = moment(t.transactionDate).format('YYYY-MM-DD');
+          if (!resultMap.has(d)) {
+            resultMap.set(d, []);
+          }
+          resultMap.get(d).push(t);
+        }
+        const resultArray = Array.from(resultMap);
+        for (const arr of resultArray) {
+          result.push({
+            transactionDate: arr[0],
+            sumAmount: arr[1].reduce(
+              (prev, curr) => prev + curr.amount,
+              arr[1][0].amount,
+            ),
+          });
+        }
+        return result;
+      } catch (e) {
+        return e;
+      }
+    }
   }
 
   getTransactions(userId: number, query: any = {}): Promise<Transaction[]> {
@@ -190,6 +241,7 @@ export class TransactionService implements OnApplicationBootstrap {
 
     const findOptionsWhere: FindOptionsWhere<Transaction> = {
       userId,
+      type: 'chi',
     };
     if (query.cateId) {
       Object.assign(findOptionsWhere, {
@@ -262,11 +314,88 @@ export class TransactionService implements OnApplicationBootstrap {
     }
   }
 
-  deleteTransaction(id: number): Promise<UpdateResult> {
-    return this.repo.softDelete(id);
+  async deleteTransaction(userId: number, id: number): Promise<UpdateResult> {
+    const transaction = await this.repo.findOneBy({ userId, id });
+    await this.profileService.changeBalance(
+      userId,
+      -transaction.amount,
+      transaction.type as TransactionType,
+    );
+    return this.repo.softDelete({ userId, id });
   }
 
   restoreTransaction(id: number): Promise<UpdateResult> {
     return this.repo.restore(id);
+  }
+
+  async loadSampleData() {
+    const user = await this.userRepo.findOneBy({ email: 'ndwuong2@gmail.com' });
+    const transactions = [];
+    for (let i = 0; i < 30; i++) {
+      transactions.push({
+        title: faker.lorem.words(6),
+        userId: user.id,
+        categoryId: 3,
+        amount: faker.datatype.number({ min: 40, max: 650 }) * 1000,
+        type: 'chi' as TransactionType,
+        transactionDate: faker.date.recent(
+          100,
+          moment({ year: 2023, month: 2 }).endOf('month').toDate(),
+        ),
+        description: faker.lorem.sentence(),
+      } as Transaction);
+    }
+    for (let i = 0; i < 6; i++) {
+      transactions.push({
+        title: faker.lorem.words(4),
+        userId: user.id,
+        categoryId: faker.datatype.number({ min: 4, max: 5 }),
+        amount: faker.datatype.number({ min: 950 / 5, max: 1500 / 5 }) * 5000,
+        type: 'chi' as TransactionType,
+        transactionDate: faker.date.recent(
+          120,
+          moment([2023, 2]).endOf('month').toDate(),
+        ),
+        description:
+          faker.datatype.number({ min: 1, max: 10 }) > 8
+            ? faker.lorem.sentence()
+            : null,
+      } as Transaction);
+    }
+    for (let i = 0; i < 4; i++) {
+      transactions.push({
+        title: faker.lorem.words(4),
+        userId: user.id,
+        categoryId: 9,
+        amount: faker.datatype.number({ min: 350 / 5, max: 15000 / 5 }) * 5000,
+        type: 'chi' as TransactionType,
+        transactionDate: faker.date.recent(
+          180,
+          moment([2023, 2]).endOf('month').toDate(),
+        ),
+        description:
+          faker.datatype.number({ min: 1, max: 10 }) > 4
+            ? faker.lorem.sentence()
+            : null,
+      } as Transaction);
+    }
+    for (let i = 0; i < 200; i++) {
+      transactions.push({
+        title: faker.lorem.words(7),
+        userId: user.id,
+        categoryId: 10,
+        amount: faker.datatype.number({ min: 50, max: 4500 }) * 1000,
+        type: faker.helpers.arrayElement(['thu', 'chi']) as TransactionType,
+        transactionDate: faker.date.recent(
+          180,
+          moment([2023, 2]).endOf('month').toDate(),
+        ),
+        description:
+          faker.datatype.number({ min: 1, max: 10 }) > 4
+            ? faker.lorem.sentence()
+            : null,
+      } as Transaction);
+    }
+    return this.repo.insert(transactions);
   }
 }

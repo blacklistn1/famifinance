@@ -35,14 +35,14 @@
         </v-col>
       </v-row>
     </v-col>
-    <v-col cols="6">
+    <v-col cols="12">
       <v-row no-gutters>
         <v-col>
           <high-chart :options="monthlySavings"></high-chart>
         </v-col>
       </v-row>
     </v-col>
-    <v-col cols="6">
+    <v-col cols="12">
       <v-row no-gutters>
         <v-col>
           <high-chart :options="expenseVsIncome"></high-chart>
@@ -110,7 +110,7 @@ export default {
     profile: {},
     monthlySavings: {
       title: {
-        text: 'Số tiền tiết kiệm hàng tháng',
+        text: 'Thu tháng trước',
         style: {
           color: 'blue',
           fontWeight: 'bold',
@@ -124,7 +124,7 @@ export default {
         }
       },
       chart: {
-        type: 'column',
+        type: 'line',
       },
       yAxis: {
         title: {
@@ -137,12 +137,12 @@ export default {
         },
         type: 'datetime',
         labels: {
-          format: '{value:%m/%Y}',
+          format: '{value:%d/%m}',
         },
       },
       series: [
         {
-          name: 'Tiết kiệm hàng tháng',
+          name: 'Số tiền',
           data: [],
         }
       ],
@@ -213,20 +213,7 @@ export default {
       series: [{
         name: 'Tổng chi theo loại',
         colorByPoint: true,
-        data: [
-          {
-            name: 'Xăng xe',
-            y: 400_000,
-          },
-          {
-            name: 'Ăn trưa',
-            y: 800_000,
-          },
-          {
-            name: 'Nhậu',
-            y: 1_400_000,
-          }
-        ],
+        data: [],
       }]
     },
     mostRecentTransactions: [
@@ -238,6 +225,7 @@ export default {
         amount: 0,
       }
     ],
+    sumByMonth: [],
   }),
   async fetch() {
     try {
@@ -245,6 +233,14 @@ export default {
       this.mostRecentTransactions = await this.$axios.$get('/transactions/most-recent')
       for (const t of this.mostRecentTransactions) {
         t.amount = Highcharts.numberFormat(parseFloat(t.amount), 0, ',', '.')
+      }
+      await this.getSumByMonth()
+      const sumByCate = await this.getSumByCategory()
+      for (const el of sumByCate) {
+        this.expensePerCategory.series[0].data.push({
+          name: el.category.title,
+          y: el.sumAmount,
+        })
       }
     } catch (e) {
       this.errorAny = true
@@ -267,12 +263,6 @@ export default {
   },
   mounted() {
     for (let i = 5; i < 12; i++) {
-      this.monthlySavings.series[0].data.push(
-        [
-          +moment({ year: 2022, month: i }),
-          randomNumber(1000, 7000) * 1000
-        ]
-      )
       this.expenseVsIncome.series[0].data.push([
         +moment({ year: 2022, month: i }),
         randomNumber(2000, 12000) * 1000
@@ -283,6 +273,37 @@ export default {
       ])
     }
   },
-  methods: {},
+  methods: {
+    async getSumByMonth() {
+      const sum = await this.$axios.$get('/transactions/sum-by-month', {
+        params: {
+          year: moment().year(),
+          month: moment().month() + 1,
+        }
+      })
+      for (const el of sum) {
+        el.transactionDate = +moment(el.transactionDate, 'YYYY-MM-DD')
+      }
+      this.sumByMonth = sum
+      for (const s of this.sumByMonth) {
+        this.monthlySavings.series[0].data.push([
+          s.transactionDate,
+          s.sumAmount,
+        ])
+      }
+    },
+    async getSumByCategory() {
+      const sum = await this.$axios.$get('/transactions/sum-by-category', {
+        params: {
+          year: moment().year(),
+          month: moment().month() + 1,
+        }
+      })
+      sum.sort((a, b) => {
+        return b.sumAmount - a.sumAmount
+      })
+      return sum
+    }
+  },
 }
 </script>

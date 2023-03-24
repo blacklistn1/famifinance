@@ -113,6 +113,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Response dialog -->
+    <DialogStatus :enabled.sync="resDialog.enabled" :dialog="resDialog"></DialogStatus>
   </v-row>
 </template>
 
@@ -129,8 +132,9 @@ export default {
       resDialog: {
         enabled: false,
         statusText: '',
-        statusCode: '',
+        statusCode: 0,
         message: '',
+        messages: [],
       },
       formEnabled: false,
       formMethod: '',
@@ -151,6 +155,7 @@ export default {
         description: '',
       },
       origItem: {},
+      deleteItemId: -1,
       headers: [
         {
           text: 'Tên giao dịch',
@@ -302,9 +307,21 @@ export default {
     },
     deleteItem(item) {
       this.deleteConfirm = true
+      this.deleteItemId = item.id
     },
-    confirmDelete(item) {
-
+    async confirmDelete() {
+      this.deleteConfirm = false
+      const res = await this.$axios.delete('/transactions/' + this.deleteItemId)
+      this.resDialog.enabled = true
+      this.resDialog.statusCode = res.status
+      this.resDialog.statusText = res.statusText
+      if (res.status > 199 && res.status < 300) {
+        this.resDialog.message = 'Xoá thành công'
+        this.tableData.filter(el => el.id !== this.deleteItemId)
+      }
+      if (res.status > 399 && res.status < 500) {
+        this.resDialog.messages = res.data.message
+      }
     },
     closeFormModal() {
       this.formEnabled = false

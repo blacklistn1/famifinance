@@ -1,14 +1,14 @@
 <template>
 <!-- eslint-disable vue/no-mutating-props -->
-  <v-dialog v-model="dialog" @click:outside="$emit('update:dialog', false)">
+  <v-dialog v-model="enabled" width="400" @click:outside="$emit('update:enabled', false)">
     <v-card>
       <v-card-title :class="colorClass">
-        {{ statusText }}
+        {{ dialog.statusText }}
       </v-card-title>
       <v-card-text>
-        <p v-if="message" class="text-body-1">{{ message }}</p>
-        <ul v-if="messages">
-          <li v-for="(m, i) in messages" :key="i" class="text-body-1">
+        <p v-if="dialog.message" class="text-body-1">{{ dialog.message }}</p>
+        <ul v-if="dialog.messages.length">
+          <li v-for="(m, i) in dialog.messages" :key="i" class="text-body-1">
             {{ m }}
           </li>
         </ul>
@@ -21,15 +21,20 @@
 /* eslint-disable vue/require-default-prop */
 export default {
   props: {
-    dialog: Boolean,
-    status: Number,
-    statusText: String,
-    message: String,
-    messages: Array,
+    enabled: Boolean,
+    dialog: {
+      type: Object,
+      default: () => ({
+        status: Number,
+        statusText: String,
+        message: String,
+        messages: Array,
+      })
+    },
   },
   computed: {
     colorClass() {
-      if (this.status > 199 && this.status < 300) return 'success'
+      if (this.dialog.status > 199 && this.dialog.status < 300) return 'success'
       return 'error white--text'
     },
   }

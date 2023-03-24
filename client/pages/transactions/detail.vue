@@ -96,6 +96,23 @@
     ></TransactionForm>
     <DialogError :dialog.sync="errorObject.flag" :message="errorObject.message"></DialogError>
 
+    <!-- Delete confirm dialog -->
+    <v-dialog v-model="deleteConfirm" width="400" light>
+      <v-card>
+        <v-card-title>
+          <h5 class="text-h5 font-weight-bold">Xác nhận xoá</h5>
+        </v-card-title>
+        <v-card-text>
+          <p>Bạn có muốn xoá giao dịch này không?</p>
+        </v-card-text>
+        <v-card-actions>
+          <v-row no-gutters justify="center">
+            <v-btn class="black white--text" @click="confirmDelete">Xoá giao dịch</v-btn>
+            <v-btn class="ml-4" @click="deleteConfirm = false">Huỷ xoá</v-btn>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 
@@ -117,6 +134,7 @@ export default {
       },
       formEnabled: false,
       formMethod: '',
+      deleteConfirm: false,
       dateMenu: false,
       timeMenu: false,
       monthMenu: false,
@@ -283,9 +301,12 @@ export default {
       }
     },
     deleteItem(item) {
-      console.log('Delete item')
+      this.deleteConfirm = true
     },
-      closeFormModal() {
+    confirmDelete(item) {
+
+    },
+    closeFormModal() {
       this.formEnabled = false
     }
   }
